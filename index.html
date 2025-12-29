@@ -1,0 +1,3441 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Prenotazioni - Sala delle Assemblee Caltanissetta</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2c5aa0;
+            --secondary-color: #e63946;
+            --success-color: #2a9d8f;
+            --warning-color: #f4a261;
+            --info-color: #457b9d;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --gray-color: #6c757d;
+            --light-gray: #e9ecef;
+            --admin-color: #6a0dad;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: var(--dark-color);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Login Screen */
+        .login-screen {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--primary-color), #1d3a6e);
+            padding: 20px;
+        }
+        
+        .login-container {
+            background-color: white;
+            padding: 3rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            width: 100%;
+            max-width: 500px;
+        }
+        
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .login-header i {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+        
+        .login-header h1 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .login-tabs {
+            display: flex;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .login-tab {
+            flex: 1;
+            padding: 1rem;
+            text-align: center;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--gray-color);
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .login-tab.active {
+            color: var(--primary-color);
+            border-bottom: 3px solid var(--primary-color);
+        }
+        
+        .login-tab.admin-tab.active {
+            color: var(--admin-color);
+            border-bottom: 3px solid var(--admin-color);
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+        }
+        
+        button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        button:hover {
+            background-color: #1d3a6e;
+        }
+        
+        .btn-secondary {
+            background-color: var(--secondary-color);
+        }
+        
+        .btn-secondary:hover {
+            background-color: #c1121f;
+        }
+        
+        .btn-success {
+            background-color: var(--success-color);
+        }
+        
+        .btn-success:hover {
+            background-color: #21867a;
+        }
+        
+        .btn-warning {
+            background-color: var(--warning-color);
+        }
+        
+        .btn-warning:hover {
+            background-color: #e76f51;
+        }
+        
+        .btn-info {
+            background-color: var(--info-color);
+        }
+        
+        .btn-info:hover {
+            background-color: #315d7e;
+        }
+        
+        .btn-admin {
+            background-color: var(--admin-color);
+        }
+        
+        .btn-admin:hover {
+            background-color: #5a0a8c;
+        }
+        
+        .btn-small {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.9rem;
+            width: auto;
+        }
+        
+        /* Main App */
+        .app-container {
+            display: none;
+        }
+        
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--primary-color), #1d3a6e);
+            color: white;
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 2rem;
+            box-shadow: var(--box-shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo i {
+            font-size: 2.5rem;
+            margin-right: 15px;
+        }
+        
+        .logo h1 {
+            font-size: 1.8rem;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .user-badge {
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .user-badge.admin {
+            background-color: rgba(106, 13, 173, 0.3);
+        }
+        
+        .logout-btn {
+            background-color: var(--secondary-color);
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius);
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .logout-btn:hover {
+            background-color: #c1121f;
+        }
+        
+        /* Navbar */
+        .navbar {
+            display: flex;
+            background-color: white;
+            border-radius: var(--border-radius);
+            margin-bottom: 2rem;
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            flex-wrap: wrap;
+        }
+        
+        .nav-item {
+            padding: 1rem 1.5rem;
+            text-decoration: none;
+            color: var(--dark-color);
+            font-weight: 600;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+            flex: 1;
+            text-align: center;
+        }
+        
+        .nav-item:hover {
+            background-color: var(--light-gray);
+        }
+        
+        .nav-item.active {
+            color: var(--primary-color);
+            border-bottom: 3px solid var(--primary-color);
+            background-color: rgba(44, 90, 160, 0.05);
+        }
+        
+        .nav-item.admin-active {
+            color: var(--admin-color);
+            border-bottom: 3px solid var(--admin-color);
+            background-color: rgba(106, 13, 173, 0.05);
+        }
+        
+        /* Main content */
+        .tab-content {
+            display: none;
+            background-color: white;
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            margin-bottom: 2rem;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        h2 {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--light-gray);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .admin-title {
+            color: var(--admin-color);
+        }
+        
+        .section-description {
+            margin-bottom: 1.5rem;
+            color: var(--gray-color);
+            font-size: 1.05rem;
+        }
+        
+        /* Booking form */
+        .booking-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            background-color: var(--light-gray);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+        }
+        
+        /* Equipment grid */
+        .equipment-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .equipment-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid #eee;
+        }
+        
+        .equipment-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .equipment-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1.2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .equipment-header.admin {
+            background-color: var(--admin-color);
+        }
+        
+        .equipment-header h3 {
+            font-size: 1.3rem;
+        }
+        
+        .equipment-status {
+            background-color: white;
+            color: var(--success-color);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .equipment-status.busy {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+        
+        .equipment-body {
+            padding: 1.2rem;
+        }
+        
+        .equipment-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+        
+        .equipment-info i {
+            color: var(--primary-color);
+            margin-right: 0.5rem;
+        }
+        
+        .booking-list {
+            margin-top: 1.5rem;
+        }
+        
+        .booking-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.8rem;
+            background-color: var(--light-gray);
+            margin-bottom: 0.5rem;
+            border-radius: var(--border-radius);
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .booking-item.user-booking {
+            border-left-color: var(--success-color);
+            background-color: rgba(42, 157, 143, 0.1);
+        }
+        
+        .booking-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .btn-edit, .btn-delete {
+            padding: 0.3rem 0.7rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .btn-edit {
+            background-color: #ffc107;
+            color: var(--dark-color);
+        }
+        
+        .btn-delete {
+            background-color: #dc3545;
+            color: white;
+        }
+        
+        /* Admin Panel */
+        .admin-actions {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .admin-action-btn {
+            flex: 1;
+            min-width: 200px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .admin-action-btn:hover {
+            border-color: var(--admin-color);
+            transform: translateY(-5px);
+        }
+        
+        .admin-action-btn i {
+            font-size: 2.5rem;
+            color: var(--admin-color);
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray-color);
+        }
+        
+        /* Equipment management */
+        .equipment-management {
+            margin-top: 2rem;
+        }
+        
+        .equipment-list, .rooms-list {
+            display: grid;
+            gap: 1rem;
+        }
+        
+        .equipment-list-item, .room-list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background-color: var(--light-gray);
+            border-radius: var(--border-radius);
+            border-left: 4px solid var(--admin-color);
+        }
+        
+        /* Register link */
+        .register-link {
+            text-align: center;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #eee;
+        }
+        
+        .register-link a {
+            color: var(--primary-color);
+            font-weight: 600;
+            text-decoration: none;
+        }
+        
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Equipment selection */
+        .equipment-selection {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .equipment-option {
+            border: 2px solid #ddd;
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        
+        .equipment-option:hover {
+            border-color: var(--primary-color);
+            background-color: rgba(44, 90, 160, 0.05);
+        }
+        
+        .equipment-option.selected {
+            border-color: var(--success-color);
+            background-color: rgba(42, 157, 143, 0.1);
+        }
+        
+        .equipment-option.unavailable {
+            opacity: 0.5;
+            cursor: not-allowed;
+            border-color: #ddd;
+            background-color: var(--light-gray);
+        }
+        
+        .equipment-option.unavailable:hover {
+            border-color: #ddd;
+            background-color: var(--light-gray);
+        }
+        
+        /* Room management */
+        .room-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .room-info-item {
+            background-color: var(--light-gray);
+            padding: 1rem;
+            border-radius: var(--border-radius);
+        }
+        
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            color: var(--gray-color);
+            font-size: 0.9rem;
+            border-top: 1px solid #eee;
+            margin-top: 2rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .login-container {
+                padding: 2rem;
+            }
+            
+            .navbar {
+                flex-direction: column;
+            }
+            
+            .nav-item {
+                text-align: center;
+                border-bottom: 1px solid #eee;
+                border-left: 3px solid transparent;
+            }
+            
+            .nav-item.active {
+                border-left: 3px solid var(--primary-color);
+                border-bottom: 1px solid #eee;
+            }
+            
+            .nav-item.admin-active {
+                border-left: 3px solid var(--admin-color);
+                border-bottom: 1px solid #eee;
+            }
+            
+            .booking-form {
+                grid-template-columns: 1fr;
+            }
+            
+            .equipment-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .equipment-selection {
+                grid-template-columns: 1fr;
+            }
+            
+            .admin-actions {
+                flex-direction: column;
+            }
+            
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .room-info {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div class="login-screen" id="login-screen">
+        <div class="login-container">
+            <div class="login-header">
+                <i class="fas fa-calendar-alt"></i>
+                <h1>Sala delle Assemblee</h1>
+                <p>Caltanissetta - Sistema Prenotazioni</p>
+            </div>
+            
+            <div class="login-tabs">
+                <button class="login-tab active" data-tab="guest">Ospite</button>
+                <button class="login-tab" data-tab="register">Registrazione</button>
+                <button class="login-tab admin-tab" data-tab="admin">Amministratore</button>
+            </div>
+            
+            <!-- Guest Login Form -->
+            <div id="guest-login-form" class="login-form">
+                <div class="form-group">
+                    <label for="guest-email">Email</label>
+                    <input type="email" id="guest-email" placeholder="email@esempio.it">
+                </div>
+                
+                <div class="form-group">
+                    <label for="guest-password">Password</label>
+                    <input type="password" id="guest-password" placeholder="La tua password">
+                </div>
+                
+                <div class="form-group">
+                    <label for="guest-room">Alloggio</label>
+                    <select id="guest-room">
+                        <option value="">Seleziona il tuo alloggio</option>
+                        <!-- Le opzioni saranno caricate dinamicamente -->
+                    </select>
+                </div>
+                
+                <button id="guest-login-btn">
+                    <i class="fas fa-sign-in-alt"></i> Accedi come Ospite
+                </button>
+                
+                <div class="register-link">
+                    <p>Sei un nuovo ospite? <a href="#" id="show-register-link">Registrati qui</a></p>
+                </div>
+                
+                <div style="margin-top: 1.5rem; padding: 1rem; background-color: var(--light-gray); border-radius: var(--border-radius);">
+                    <p style="font-size: 0.9rem; color: var(--gray-color); margin-bottom: 0.5rem;"><strong>Credenziali demo:</strong></p>
+                    <p style="font-size: 0.85rem; color: var(--gray-color); margin-bottom: 0.25rem;">Email: ospite@esempio.it</p>
+                    <p style="font-size: 0.85rem; color: var(--gray-color);">Password: ospite123 (Alloggio: A3)</p>
+                </div>
+            </div>
+            
+            <!-- Registration Form -->
+            <div id="guest-register-form" class="login-form" style="display: none;">
+                <div class="form-group">
+                    <label for="register-name">Nome e Cognome</label>
+                    <input type="text" id="register-name" placeholder="Mario Rossi">
+                </div>
+                
+                <div class="form-group">
+                    <label for="register-email">Email</label>
+                    <input type="email" id="register-email" placeholder="tuo.email@esempio.it">
+                </div>
+                
+                <div class="form-group">
+                    <label for="register-password">Password</label>
+                    <input type="password" id="register-password" placeholder="Scegli una password">
+                </div>
+                
+                <div class="form-group">
+                    <label for="register-confirm-password">Conferma Password</label>
+                    <input type="password" id="register-confirm-password" placeholder="Ripeti la password">
+                </div>
+                
+                <div class="form-group">
+                    <label for="register-room">Alloggio</label>
+                    <select id="register-room">
+                        <option value="">Seleziona il tuo alloggio</option>
+                        <!-- Le opzioni saranno caricate dinamicamente -->
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="register-phone">Telefono (opzionale)</label>
+                    <input type="tel" id="register-phone" placeholder="333 1234567">
+                </div>
+                
+                <button id="register-btn" class="btn-success">
+                    <i class="fas fa-user-plus"></i> Registrati come Ospite
+                </button>
+                
+                <div class="register-link">
+                    <p>Hai già un account? <a href="#" id="show-login-link">Accedi qui</a></p>
+                </div>
+            </div>
+            
+            <!-- Admin Login Form -->
+            <div id="admin-login-form" class="login-form" style="display: none;">
+                <div class="form-group">
+                    <label for="admin-username">Nome utente amministratore</label>
+                    <input type="text" id="admin-username" placeholder="Nome utente">
+                </div>
+                
+                <div class="form-group">
+                    <label for="admin-password">Password</label>
+                    <input type="password" id="admin-password" placeholder="Password amministratore">
+                </div>
+                
+                <button id="admin-login-btn" class="btn-admin">
+                    <i class="fas fa-user-shield"></i> Accedi come Amministratore
+                </button>
+                
+                <div style="margin-top: 1.5rem; padding: 1rem; background-color: var(--light-gray); border-radius: var(--border-radius);">
+                    <p style="font-size: 0.9rem; color: var(--gray-color);"><strong>Credenziali admin demo:</strong></p>
+                    <p style="font-size: 0.85rem; color: var(--gray-color);">Username: admin</p>
+                    <p style="font-size: 0.85rem; color: var(--gray-color);">Password: admin123</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Application -->
+    <div class="app-container" id="app-container">
+        <!-- Guest App -->
+        <div id="guest-app">
+            <header>
+                <div class="logo">
+                    <i class="fas fa-calendar-alt"></i>
+                    <div>
+                        <h1>Sala delle Assemblee di Caltanissetta</h1>
+                        <p>Sistema di prenotazione lavanderia e palestra</p>
+                    </div>
+                </div>
+                
+                <div class="user-info">
+                    <div class="user-badge">
+                        <i class="fas fa-user"></i>
+                        <div>
+                            <div id="current-guest-name"></div>
+                            <small id="current-guest-room"></small>
+                        </div>
+                    </div>
+                    <a href="#" class="logout-btn" id="guest-logout-btn">
+                        <i class="fas fa-sign-out-alt"></i> Esci
+                    </a>
+                </div>
+            </header>
+            
+            <nav class="navbar">
+                <a href="#" class="nav-item active" data-tab="laundry">Lavanderia</a>
+                <a href="#" class="nav-item" data-tab="gym">Palestra</a>
+                <a href="#" class="nav-item" data-tab="my-bookings">Le mie prenotazioni</a>
+                <a href="#" class="nav-item" data-tab="info">Informazioni</a>
+            </nav>
+            
+            <!-- Lavanderia Tab -->
+            <div id="laundry" class="tab-content active">
+                <h2><i class="fas fa-tshirt"></i> Prenotazione Lavanderia</h2>
+                <p class="section-description">Prenota l'uso di lavatrici e asciugatrici della lavanderia. Scegli l'apparecchio specifico, il giorno e l'orario di inizio e fine. Tutti possono visualizzare le prenotazioni in corso, ma solo tu puoi modificare le tue prenotazioni.</p>
+                
+                <div class="booking-form">
+                    <div class="form-group">
+                        <label for="laundry-type">Tipo di apparecchio:</label>
+                        <select id="laundry-type">
+                            <option value="">Seleziona tipo</option>
+                            <option value="washer">Lavatrice</option>
+                            <option value="dryer">Asciugatrice</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="laundry-equipment-select">Seleziona apparecchio:</label>
+                        <select id="laundry-equipment-select" disabled>
+                            <option value="">Prima seleziona il tipo</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="laundry-date">Data:</label>
+                        <input type="date" id="laundry-date">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="laundry-start">Ora di inizio:</label>
+                        <input type="time" id="laundry-start" min="07:00" max="22:00" value="10:00">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="laundry-end">Ora di fine:</label>
+                        <input type="time" id="laundry-end" min="07:00" max="23:00" value="12:00">
+                    </div>
+                    
+                    <button id="book-laundry-btn" class="btn-success">
+                        <i class="fas fa-calendar-plus"></i> Prenota
+                    </button>
+                </div>
+                
+                <div id="laundry-equipment-visual" style="display: none;">
+                    <h3>Selezione Visuale delle Lavatrici/Asciugatrici</h3>
+                    <p class="section-description">Clicca sull'apparecchio che desideri prenotare per selezionarlo.</p>
+                    
+                    <div class="equipment-selection" id="laundry-equipment-selection">
+                        <!-- Le opzioni delle lavatrici/asciugatrici saranno caricate qui dinamicamente -->
+                    </div>
+                </div>
+                
+                <h3>Disponibilità Lavatrici e Asciugatrici</h3>
+                <div class="equipment-grid" id="laundry-equipment">
+                    <!-- Le lavatrici e asciugatrici saranno caricate qui dinamicamente -->
+                </div>
+            </div>
+            
+            <!-- Palestra Tab -->
+            <div id="gym" class="tab-content">
+                <h2><i class="fas fa-dumbbell"></i> Prenotazione Attrezzature Palestra</h2>
+                <p class="section-description">Prenota l'uso delle attrezzature della palestra. Scegli l'attrezzatura specifica, il giorno e l'orario di inizio e fine. Tutti possono visualizzare le prenotazioni in corso, ma solo tu puoi modificare le tue prenotazioni.</p>
+                
+                <div class="booking-form">
+                    <div class="form-group">
+                        <label for="gym-equipment-type">Tipo di attrezzatura:</label>
+                        <select id="gym-equipment-type">
+                            <option value="">Seleziona tipo</option>
+                            <option value="treadmill">Tapis roulant</option>
+                            <option value="bike">Bicicletta ellittica</option>
+                            <option value="weights">Pesi liberi</option>
+                            <option value="multistation">Multistazione</option>
+                            <option value="bench">Panca</option>
+                            <option value="other">Altro</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="gym-equipment-select">Seleziona attrezzatura:</label>
+                        <select id="gym-equipment-select" disabled>
+                            <option value="">Prima seleziona il tipo</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="gym-date">Data:</label>
+                        <input type="date" id="gym-date">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="gym-start">Ora di inizio:</label>
+                        <input type="time" id="gym-start" min="06:00" max="23:00" value="08:00">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="gym-end">Ora di fine:</label>
+                        <input type="time" id="gym-end" min="06:00" max="23:59" value="09:00">
+                    </div>
+                    
+                    <button id="book-gym-btn" class="btn-success">
+                        <i class="fas fa-calendar-plus"></i> Prenota
+                    </button>
+                </div>
+                
+                <div id="gym-equipment-visual" style="display: none;">
+                    <h3>Selezione Visuale delle Attrezzature</h3>
+                    <p class="section-description">Clicca sull'attrezzatura che desideri prenotare per selezionarla.</p>
+                    
+                    <div class="equipment-selection" id="gym-equipment-selection">
+                        <!-- Le opzioni delle attrezzature palestra saranno caricate qui dinamicamente -->
+                    </div>
+                </div>
+                
+                <h3>Disponibilità Attrezzature Palestra</h3>
+                <div class="equipment-grid" id="gym-equipment-list">
+                    <!-- Le attrezzature della palestra saranno caricate qui dinamicamente -->
+                </div>
+            </div>
+            
+            <!-- Le mie prenotazioni Tab -->
+            <div id="my-bookings" class="tab-content">
+                <h2><i class="fas fa-calendar-check"></i> Le mie Prenotazioni</h2>
+                <p class="section-description">Qui puoi visualizzare, modificare o cancellare le tue prenotazioni attive.</p>
+                
+                <div id="my-bookings-list">
+                    <!-- Le prenotazioni dell'utente saranno caricate qui dinamicamente -->
+                </div>
+            </div>
+            
+            <!-- Informazioni Tab -->
+            <div id="info" class="tab-content">
+                <h2><i class="fas fa-info-circle"></i> Informazioni</h2>
+                <div class="section-description">
+                    <h3>Come funziona il sistema di prenotazioni</h3>
+                    <p>Questo sistema permette agli ospiti della Sala delle Assemblee di Caltanissetta di prenotare l'uso delle lavatrici/asciugatrici e delle attrezzature della palestra.</p>
+                    
+                    <h4>Regole per la lavanderia:</h4>
+                    <ul>
+                        <li>Le prenotazioni possono essere effettuate dalle 7:00 alle 22:00</li>
+                        <li>La durata massima di una prenotazione è di 3 ore</li>
+                        <li>È possibile prenotare massimo 2 slot al giorno per ospite</li>
+                        <li>Tutti gli ospiti possono visualizzare le prenotazioni in corso</li>
+                        <li>Solo l'ospite che ha effettuato la prenotazione può modificarla o cancellarla</li>
+                    </ul>
+                    
+                    <h4>Regole per la palestra:</h4>
+                    <ul>
+                        <li>Le prenotazioni possono essere effettuate dalle 6:00 alle 23:00</li>
+                        <li>La durata massima di una prenotazione è di 2 ore per attrezzatura</li>
+                        <li>È possibile prenotare massimo 1 attrezzatura alla volta</li>
+                        <li>Tutti gli ospiti possono visualizzare le prenotazioni in corso</li>
+                        <li>Solo l'ospite che ha effettuato la prenotazione può modificarla o cancellarla</li>
+                    </ul>
+                    
+                    <h4>Registrazione nuovi ospiti:</h4>
+                    <ul>
+                        <li>I nuovi ospiti possono registrarsi con nome, email e numero di alloggio</li>
+                        <li>Ogni alloggio può avere più ospiti registrati</li>
+                        <li>Le credenziali sono personali e non condivisibili</li>
+                    </ul>
+                    
+                    <p>Per assistenza, contattare la reception della struttura.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Admin App -->
+        <div id="admin-app" style="display: none;">
+            <header>
+                <div class="logo">
+                    <i class="fas fa-user-shield"></i>
+                    <div>
+                        <h1>Pannello Amministratore</h1>
+                        <p>Gestione attrezzature, alloggi e prenotazioni</p>
+                    </div>
+                </div>
+                
+                <div class="user-info">
+                    <div class="user-badge admin">
+                        <i class="fas fa-user-shield"></i>
+                        <div>
+                            <div id="current-admin-name"></div>
+                            <small>Amministratore</small>
+                        </div>
+                    </div>
+                    <a href="#" class="logout-btn" id="admin-logout-btn">
+                        <i class="fas fa-sign-out-alt"></i> Esci
+                    </a>
+                </div>
+            </header>
+            
+            <nav class="navbar">
+                <a href="#" class="nav-item admin-active" data-tab="admin-dashboard">Dashboard</a>
+                <a href="#" class="nav-item" data-tab="manage-laundry">Gestisci Lavanderia</a>
+                <a href="#" class="nav-item" data-tab="manage-gym">Gestisci Palestra</a>
+                <a href="#" class="nav-item" data-tab="manage-rooms">Gestisci Alloggi</a>
+                <a href="#" class="nav-item" data-tab="manage-users">Gestisci Ospiti</a>
+                <a href="#" class="nav-item" data-tab="view-bookings">Visualizza Prenotazioni</a>
+            </nav>
+            
+            <!-- Dashboard Admin -->
+            <div id="admin-dashboard" class="tab-content active">
+                <h2 class="admin-title"><i class="fas fa-tachometer-alt"></i> Dashboard Amministratore</h2>
+                <p class="section-description">Da qui puoi gestire tutte le attrezzature, gli alloggi e monitorare le prenotazioni della struttura.</p>
+                
+                <div class="admin-actions">
+                    <div class="admin-action-btn" id="add-laundry-btn">
+                        <i class="fas fa-plus-circle"></i>
+                        <h3>Aggiungi Lavatrice/Asciugatrice</h3>
+                        <p>Aggiungi nuove attrezzature alla lavanderia</p>
+                    </div>
+                    
+                    <div class="admin-action-btn" id="add-gym-equipment-btn">
+                        <i class="fas fa-dumbbell"></i>
+                        <h3>Aggiungi Attrezzatura Palestra</h3>
+                        <p>Aggiungi nuove attrezzature alla palestra</p>
+                    </div>
+                    
+                    <div class="admin-action-btn" id="add-room-btn">
+                        <i class="fas fa-door-closed"></i>
+                        <h3>Aggiungi Nuovo Alloggio</h3>
+                        <p>Aggiungi un nuovo alloggio alla struttura</p>
+                    </div>
+                    
+                    <div class="admin-action-btn" id="view-all-bookings-btn">
+                        <i class="fas fa-list-alt"></i>
+                        <h3>Visualizza Tutte le Prenotazioni</h3>
+                        <p>Visualizza tutte le prenotazioni attive</p>
+                    </div>
+                </div>
+                
+                <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-top: 2rem;">
+                    <div style="background-color: white; padding: 1.5rem; border-radius: var(--border-radius); box-shadow: var(--box-shadow);">
+                        <h3 style="color: var(--primary-color); margin-bottom: 0.5rem;">Alloggi</h3>
+                        <p style="font-size: 2rem; font-weight: bold;" id="rooms-count">0</p>
+                        <p>alloggi disponibili</p>
+                    </div>
+                    
+                    <div style="background-color: white; padding: 1.5rem; border-radius: var(--border-radius); box-shadow: var(--box-shadow);">
+                        <h3 style="color: var(--primary-color); margin-bottom: 0.5rem;">Lavanderia</h3>
+                        <p style="font-size: 2rem; font-weight: bold;" id="laundry-count">0</p>
+                        <p>attrezzature registrate</p>
+                    </div>
+                    
+                    <div style="background-color: white; padding: 1.5rem; border-radius: var(--border-radius); box-shadow: var(--box-shadow);">
+                        <h3 style="color: var(--primary-color); margin-bottom: 0.5rem;">Palestra</h3>
+                        <p style="font-size: 2rem; font-weight: bold;" id="gym-count">0</p>
+                        <p>attrezzature registrate</p>
+                    </div>
+                    
+                    <div style="background-color: white; padding: 1.5rem; border-radius: var(--border-radius); box-shadow: var(--box-shadow);">
+                        <h3 style="color: var(--primary-color); margin-bottom: 0.5rem;">Prenotazioni Attive</h3>
+                        <p style="font-size: 2rem; font-weight: bold;" id="active-bookings-count">0</p>
+                        <p>prenotazioni in corso</p>
+                    </div>
+                    
+                    <div style="background-color: white; padding: 1.5rem; border-radius: var(--border-radius); box-shadow: var(--box-shadow);">
+                        <h3 style="color: var(--primary-color); margin-bottom: 0.5rem;">Ospiti Registrati</h3>
+                        <p style="font-size: 2rem; font-weight: bold;" id="users-count">0</p>
+                        <p>ospiti registrati</p>
+                    </div>
+                    
+                    <div style="background-color: white; padding: 1.5rem; border-radius: var(--border-radius); box-shadow: var(--box-shadow);">
+                        <h3 style="color: var(--primary-color); margin-bottom: 0.5rem;">Occupazione Alloggi</h3>
+                        <p style="font-size: 2rem; font-weight: bold;" id="room-occupancy">0%</p>
+                        <p>alloggi con ospiti registrati</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Gestisci Lavanderia -->
+            <div id="manage-laundry" class="tab-content">
+                <h2 class="admin-title"><i class="fas fa-tshirt"></i> Gestione Lavanderia</h2>
+                <p class="section-description">Gestisci le lavatrici e asciugatrici disponibili nella lavanderia. Puoi aggiungere nuove attrezzature, modificare quelle esistenti o rimuoverle.</p>
+                
+                <button id="add-new-laundry-btn" class="btn-admin" style="margin-bottom: 1.5rem;">
+                    <i class="fas fa-plus"></i> Aggiungi Nuova Attrezzatura
+                </button>
+                
+                <div class="equipment-management">
+                    <h3>Attrezzature Lavanderia</h3>
+                    <div class="equipment-list" id="admin-laundry-list">
+                        <!-- Lista delle attrezzature della lavanderia -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Gestisci Palestra -->
+            <div id="manage-gym" class="tab-content">
+                <h2 class="admin-title"><i class="fas fa-dumbbell"></i> Gestione Palestra</h2>
+                <p class="section-description">Gestisci le attrezzature disponibili nella palestra. Puoi aggiungere nuove attrezzature, modificare quelle esistenti o rimuoverle.</p>
+                
+                <button id="add-new-gym-btn" class="btn-admin" style="margin-bottom: 1.5rem;">
+                    <i class="fas fa-plus"></i> Aggiungi Nuova Attrezzatura
+                </button>
+                
+                <div class="equipment-management">
+                    <h3>Attrezzature Palestra</h3>
+                    <div class="equipment-list" id="admin-gym-list">
+                        <!-- Lista delle attrezzature della palestra -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Gestisci Alloggi -->
+            <div id="manage-rooms" class="tab-content">
+                <h2 class="admin-title"><i class="fas fa-door-closed"></i> Gestione Alloggi</h2>
+                <p class="section-description">Gestisci gli alloggi disponibili nella struttura. Puoi aggiungere nuovi alloggi, modificare quelli esistenti o rimuoverli.</p>
+                
+                <button id="add-new-room-btn" class="btn-admin" style="margin-bottom: 1.5rem;">
+                    <i class="fas fa-plus"></i> Aggiungi Nuovo Alloggio
+                </button>
+                
+                <div class="equipment-management">
+                    <h3>Alloggi Disponibili</h3>
+                    <div class="rooms-list" id="admin-rooms-list">
+                        <!-- Lista degli alloggi -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Gestisci Ospiti -->
+            <div id="manage-users" class="tab-content">
+                <h2 class="admin-title"><i class="fas fa-users"></i> Gestione Ospiti</h2>
+                <p class="section-description">Visualizza e gestisci gli ospiti registrati nel sistema.</p>
+                
+                <div class="equipment-management">
+                    <h3>Ospiti Registrati</h3>
+                    <div class="equipment-list" id="admin-users-list">
+                        <!-- Lista degli ospiti registrati -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Visualizza Prenotazioni -->
+            <div id="view-bookings" class="tab-content">
+                <h2 class="admin-title"><i class="fas fa-list-alt"></i> Tutte le Prenotazioni</h2>
+                <p class="section-description">Visualizza tutte le prenotazioni attive per lavanderia e palestra.</p>
+                
+                <div style="margin-bottom: 2rem;">
+                    <h3>Prenotazioni Lavanderia</h3>
+                    <div id="admin-laundry-bookings">
+                        <!-- Prenotazioni lavanderia -->
+                    </div>
+                </div>
+                
+                <div>
+                    <h3>Prenotazioni Palestra</h3>
+                    <div id="admin-gym-bookings">
+                        <!-- Prenotazioni palestra -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Modali per admin -->
+        <div id="add-laundry-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="admin-title">Aggiungi Attrezzatura Lavanderia</h3>
+                    <button class="close-modal">&times;</button>
+                </div>
+                
+                <div class="form-group">
+                    <label for="new-laundry-type">Tipo:</label>
+                    <select id="new-laundry-type">
+                        <option value="washer">Lavatrice</option>
+                        <option value="dryer">Asciugatrice</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="new-laundry-name">Nome/Identificativo:</label>
+                    <input type="text" id="new-laundry-name" placeholder="Es: Lavatrice 1">
+                </div>
+                
+                <div class="form-group">
+                    <label for="new-laundry-position">Posizione nella lavanderia:</label>
+                    <input type="text" id="new-laundry-position" placeholder="Es: Angolo sinistro, lato finestra">
+                </div>
+                
+                <div class="form-group">
+                    <label for="new-laundry-description">Descrizione/Note:</label>
+                    <textarea id="new-laundry-description" rows="3" placeholder="Capacità, modello, istruzioni"></textarea>
+                </div>
+                
+                <button id="save-laundry-btn" class="btn-admin">Salva Attrezzatura</button>
+            </div>
+        </div>
+        
+        <div id="add-gym-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="admin-title">Aggiungi Attrezzatura Palestra</h3>
+                    <button class="close-modal">&times;</button>
+                </div>
+                
+                <div class="form-group">
+                    <label for="new-gym-type">Tipo di attrezzatura:</label>
+                    <select id="new-gym-type">
+                        <option value="treadmill">Tapis roulant</option>
+                        <option value="bike">Bicicletta ellittica</option>
+                        <option value="weights">Pesi liberi</option>
+                        <option value="multistation">Multistazione</option>
+                        <option value="bench">Panca piana</option>
+                        <option value="rack">Rack per pesi</option>
+                        <option value="other">Altro</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="new-gym-name">Nome/Identificativo:</label>
+                    <input type="text" id="new-gym-name" placeholder="Es: Tapis roulant 1">
+                </div>
+                
+                <div class="form-group">
+                    <label for="new-gym-position">Posizione nella palestra:</label>
+                    <input type="text" id="new-gym-position" placeholder="Es: Area cardio, vicino all'ingresso">
+                </div>
+                
+                <div class="form-group">
+                    <label for="new-gym-description">Descrizione/Note:</label>
+                    <textarea id="new-gym-description" rows="3" placeholder="Specifiche tecniche o note aggiuntive"></textarea>
+                </div>
+                
+                <button id="save-gym-btn" class="btn-admin">Salva Attrezzatura</button>
+            </div>
+        </div>
+        
+        <!-- Modale per gestire alloggi -->
+        <div id="add-room-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="admin-title" id="room-modal-title">Aggiungi Nuovo Alloggio</h3>
+                    <button class="close-modal">&times;</button>
+                </div>
+                
+                <input type="hidden" id="edit-room-id" value="">
+                
+                <div class="form-group">
+                    <label for="new-room-code">Codice Alloggio:</label>
+                    <input type="text" id="new-room-code" placeholder="Es: A1, B3, C12">
+                </div>
+                
+                <div class="form-group">
+                    <label for="new-room-name">Nome/Descrizione Alloggio:</label>
+                    <input type="text" id="new-room-name" placeholder="Es: Suite Familiare, Camera Doppia, Appartamento">
+                </div>
+                
+                <div class="form-group">
+                    <label for="new-room-type">Tipo di alloggio:</label>
+                    <select id="new-room-type">
+                        <option value="single">Camera Singola</option>
+                        <option value="double">Camera Doppia</option>
+                        <option value="twin">Camera con due letti singoli</option>
+                        <option value="suite">Suite</option>
+                        <option value="apartment">Appartamento</option>
+                        <option value="family">Familiare</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="new-room-capacity">Capacità (numero di persone):</label>
+                    <input type="number" id="new-room-capacity" min="1" max="10" value="2">
+                </div>
+                
+                <div class="form-group">
+                    <label for="new-room-floor">Piano:</label>
+                    <input type="text" id="new-room-floor" placeholder="Es: Piano Terra, Primo Piano, etc.">
+                </div>
+                
+                <div class="form-group">
+                    <label for="new-room-features">Caratteristiche/Servizi:</label>
+                    <textarea id="new-room-features" rows="3" placeholder="Es: Bagno privato, TV, WiFi, Cucina"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="new-room-status">Stato:</label>
+                    <select id="new-room-status">
+                        <option value="active">Attivo e disponibile</option>
+                        <option value="maintenance">In manutenzione</option>
+                        <option value="reserved">Riservato</option>
+                    </select>
+                </div>
+                
+                <button id="save-room-btn" class="btn-admin">Salva Alloggio</button>
+            </div>
+        </div>
+        
+        <!-- Modale per modificare prenotazione -->
+        <div id="edit-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Modifica Prenotazione</h3>
+                    <button class="close-modal">&times;</button>
+                </div>
+                
+                <div class="booking-form" id="edit-booking-form">
+                    <!-- Il form di modifica verrà popolato dinamicamente -->
+                </div>
+                
+                <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                    <button id="save-edit-btn" class="btn-success" style="flex: 1;">Salva modifiche</button>
+                    <button id="cancel-edit-btn" class="btn-secondary" style="flex: 1;">Annulla</button>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Sala delle Assemblee di Caltanissetta &copy; 2023 - Sistema di Prenotazioni</p>
+            <p>Pannello amministratore per la gestione delle attrezzature e degli alloggi</p>
+        </footer>
+    </div>
+
+    <script>
+        // Database iniziale (in una app reale questi dati sarebbero su un server)
+        let rooms = [
+            { id: 1, code: "A1", name: "Camera Singola", type: "single", capacity: 1, floor: "Piano Terra", features: "Bagno privato, TV, WiFi", status: "active", created: "2023-01-15" },
+            { id: 2, code: "A2", name: "Camera Doppia", type: "double", capacity: 2, floor: "Piano Terra", features: "Bagno privato, TV, WiFi", status: "active", created: "2023-01-15" },
+            { id: 3, code: "A3", name: "Suite Familiare", type: "family", capacity: 4, floor: "Primo Piano", features: "Bagno privato, TV, WiFi, Cucina", status: "active", created: "2023-01-15" },
+            { id: 4, code: "A4", name: "Appartamento", type: "apartment", capacity: 3, floor: "Primo Piano", features: "Bagno privato, TV, WiFi, Cucina completa", status: "active", created: "2023-02-10" },
+            { id: 5, code: "A5", name: "Camera Doppia", type: "double", capacity: 2, floor: "Secondo Piano", features: "Bagno privato, TV, WiFi", status: "maintenance", created: "2023-02-10" },
+            { id: 6, code: "B1", name: "Camera con due letti singoli", type: "twin", capacity: 2, floor: "Secondo Piano", features: "Bagno privato, TV, WiFi", status: "active", created: "2023-03-05" }
+        ];
+        
+        let users = [
+            { id: 1, email: "ospite@esempio.it", password: "ospite123", name: "Mario Rossi", roomId: 3, roomCode: "A3", phone: "", type: "guest", registered: "2023-10-01" },
+            { id: 2, email: "giulia@esempio.it", password: "giulia123", name: "Giulia Verdi", roomId: 1, roomCode: "A1", phone: "333 1234567", type: "guest", registered: "2023-10-05" },
+            { id: 3, email: "luca@esempio.it", password: "luca123", name: "Luca Bianchi", roomId: 4, roomCode: "A4", phone: "334 9876543", type: "guest", registered: "2023-10-10" }
+        ];
+        
+        let adminUsers = [
+            { id: 100, username: "admin", password: "admin123", name: "Amministratore Sistema", type: "admin" }
+        ];
+        
+        let currentUser = null;
+        let isAdmin = false;
+        
+        let laundryEquipment = [
+            { id: "washer-1", name: "Lavatrice 1", type: "washer", position: "Angolo sinistro", description: "Lavatrice da 8kg, modello Samsung", addedBy: "admin" },
+            { id: "washer-2", name: "Lavatrice 2", type: "washer", position: "Centro", description: "Lavatrice da 10kg, modello Whirlpool", addedBy: "admin" },
+            { id: "washer-3", name: "Lavatrice 3", type: "washer", position: "Angolo destro", description: "Lavatrice da 7kg, modello Bosch", addedBy: "admin" },
+            { id: "dryer-1", name: "Asciugatrice 1", type: "dryer", position: "Lato finestra", description: "Asciugatrice a condensazione, 8kg", addedBy: "admin" },
+            { id: "dryer-2", name: "Asciugatrice 2", type: "dryer", position: "Lato porta", description: "Asciugatrice a pompa di calore, 9kg", addedBy: "admin" }
+        ];
+        
+        let gymEquipment = [
+            { id: "treadmill-1", name: "Tapis roulant 1", type: "treadmill", position: "Area cardio", description: "Tapis roulant elettrico con inclinazione", addedBy: "admin" },
+            { id: "treadmill-2", name: "Tapis roulant 2", type: "treadmill", position: "Area cardio", description: "Tapis roulant professionale", addedBy: "admin" },
+            { id: "bike-1", name: "Bicicletta ellittica 1", type: "bike", position: "Area cardio", description: "Bicicletta ellittica con monitor cardiaco", addedBy: "admin" },
+            { id: "bike-2", name: "Bicicletta ellittica 2", type: "bike", position: "Area cardio", description: "Bicicletta ellittica avanzata", addedBy: "admin" },
+            { id: "weights-1", name: "Pesi liberi", type: "weights", position: "Area pesi", description: "Set di pesi da 2kg a 20kg", addedBy: "admin" },
+            { id: "multistation-1", name: "Multistazione", type: "multistation", position: "Area attrezzi", description: "Multistazione per esercizi completi", addedBy: "admin" },
+            { id: "bench-1", name: "Panca piana", type: "bench", position: "Area pesi", description: "Panca piana regolabile", addedBy: "admin" }
+        ];
+        
+        let bookings = [
+            {
+                id: "1",
+                type: "laundry",
+                equipmentType: "washer",
+                equipmentId: "washer-1",
+                equipmentName: "Lavatrice 1",
+                userId: 2,
+                userName: "Giulia Verdi",
+                userRoomId: 1,
+                userRoomCode: "A1",
+                date: getFormattedDate(addDays(new Date(), 1)),
+                startTime: "10:00",
+                endTime: "12:00",
+                status: "active"
+            },
+            {
+                id: "2",
+                type: "laundry",
+                equipmentType: "dryer",
+                equipmentId: "dryer-2",
+                equipmentName: "Asciugatrice 2",
+                userId: 1,
+                userName: "Mario Rossi",
+                userRoomId: 3,
+                userRoomCode: "A3",
+                date: getFormattedDate(new Date()),
+                startTime: "14:00",
+                endTime: "16:00",
+                status: "active"
+            },
+            {
+                id: "3",
+                type: "gym",
+                equipmentType: "treadmill",
+                equipmentId: "treadmill-1",
+                equipmentName: "Tapis roulant 1",
+                userId: 3,
+                userName: "Luca Bianchi",
+                userRoomId: 4,
+                userRoomCode: "A4",
+                date: getFormattedDate(new Date()),
+                startTime: "09:00",
+                endTime: "10:00",
+                status: "active"
+            }
+        ];
+        
+        // Variabile per tenere traccia della selezione visiva
+        let selectedLaundryEquipmentId = null;
+        let selectedGymEquipmentId = null;
+        
+        // Funzioni di utilità
+        function getFormattedDate(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+        
+        function addDays(date, days) {
+            const result = new Date(date);
+            result.setDate(result.getDate() + days);
+            return result;
+        }
+        
+        function formatTime(time) {
+            return time.substring(0, 5);
+        }
+        
+        function generateId() {
+            return Date.now().toString() + Math.random().toString(36).substr(2, 9);
+        }
+        
+        function populateRoomSelects() {
+            // Popola le select degli alloggi nei form login e registrazione
+            const guestRoomSelect = document.getElementById('guest-room');
+            const registerRoomSelect = document.getElementById('register-room');
+            
+            if (guestRoomSelect) {
+                guestRoomSelect.innerHTML = '<option value="">Seleziona il tuo alloggio</option>';
+                rooms.filter(room => room.status === "active").forEach(room => {
+                    const option = document.createElement('option');
+                    option.value = room.id;
+                    option.textContent = `${room.code} - ${room.name}`;
+                    guestRoomSelect.appendChild(option);
+                });
+            }
+            
+            if (registerRoomSelect) {
+                registerRoomSelect.innerHTML = '<option value="">Seleziona il tuo alloggio</option>';
+                rooms.filter(room => room.status === "active").forEach(room => {
+                    const option = document.createElement('option');
+                    option.value = room.id;
+                    option.textContent = `${room.code} - ${room.name}`;
+                    registerRoomSelect.appendChild(option);
+                });
+            }
+        }
+        
+        // Inizializzazione
+        document.addEventListener('DOMContentLoaded', function() {
+            // Popola le select degli alloggi al caricamento
+            populateRoomSelects();
+            
+ // Gestione tab login/registrazione
+document.querySelectorAll('.login-tab').forEach(tab => {
+    tab.addEventListener('click', function() {
+        const tabId = this.getAttribute('data-tab');
+        
+        // Aggiorna la navigazione
+        document.querySelectorAll('.login-tab').forEach(t => {
+            t.classList.remove('active');
+            // NON rimuovere admin-tab qui - è una classe permanente per lo stile
+        });
+        this.classList.add('active');
+        // NON aggiungere admin-tab qui - viene gestito nell'HTML iniziale
+        
+        // Mostra il form selezionato
+        document.getElementById('guest-login-form').style.display = tabId === 'guest' ? 'block' : 'none';
+        document.getElementById('guest-register-form').style.display = tabId === 'register' ? 'block' : 'none';
+        document.getElementById('admin-login-form').style.display = tabId === 'admin' ? 'block' : 'none';
+    });
+});
+            
+            // Mostra form registrazione
+            document.getElementById('show-register-link').addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelectorAll('.login-tab').forEach(t => {
+                    t.classList.remove('active');
+                    if (t.getAttribute('data-tab') === 'admin') {
+                        t.classList.remove('admin-tab');
+                    }
+                });
+                document.querySelector('[data-tab="register"]').classList.add('active');
+                
+                document.getElementById('guest-login-form').style.display = 'none';
+                document.getElementById('guest-register-form').style.display = 'block';
+                document.getElementById('admin-login-form').style.display = 'none';
+            });
+            
+            // Mostra form login
+            document.getElementById('show-login-link').addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelectorAll('.login-tab').forEach(t => {
+                    t.classList.remove('active');
+                    if (t.getAttribute('data-tab') === 'admin') {
+                        t.classList.remove('admin-tab');
+                    }
+                });
+                document.querySelector('[data-tab="guest"]').classList.add('active');
+                
+                document.getElementById('guest-login-form').style.display = 'block';
+                document.getElementById('guest-register-form').style.display = 'none';
+                document.getElementById('admin-login-form').style.display = 'none';
+            });
+            
+            // Login ospite
+            document.getElementById('guest-login-btn').addEventListener('click', function() {
+                const email = document.getElementById('guest-email').value;
+                const password = document.getElementById('guest-password').value;
+                const roomId = document.getElementById('guest-room').value;
+                
+                if (!email || !password || !roomId) {
+                    alert('Per favore, compila tutti i campi.');
+                    return;
+                }
+                
+                // Verifica credenziali
+                const user = users.find(u => 
+                    u.email === email && 
+                    u.password === password && 
+                    u.roomId == roomId  // Nota: == perché roomId è string dal form
+                );
+                
+                if (!user) {
+                    alert('Credenziali non valide. Controlla email, password e alloggio.');
+                    return;
+                }
+                
+                // Login riuscito
+                currentUser = user;
+                isAdmin = false;
+                
+                showApp();
+                updateGuestUI();
+                renderLaundryEquipment();
+                renderGymEquipment();
+                renderMyBookings();
+                populateEquipmentSelects();
+                setupEquipmentSelection();
+                
+                // Imposta date minime
+                const today = getFormattedDate(new Date());
+                document.getElementById('laundry-date').min = today;
+                document.getElementById('laundry-date').value = today;
+                
+                document.getElementById('gym-date').min = today;
+                document.getElementById('gym-date').value = today;
+            });
+            
+            // Registrazione nuovo ospite
+            document.getElementById('register-btn').addEventListener('click', function() {
+                const name = document.getElementById('register-name').value;
+                const email = document.getElementById('register-email').value;
+                const password = document.getElementById('register-password').value;
+                const confirmPassword = document.getElementById('register-confirm-password').value;
+                const roomId = document.getElementById('register-room').value;
+                const phone = document.getElementById('register-phone').value;
+                
+                // Validazione
+                if (!name || !email || !password || !confirmPassword || !roomId) {
+                    alert('Per favore, compila tutti i campi obbligatori.');
+                    return;
+                }
+                
+                if (password !== confirmPassword) {
+                    alert('Le password non coincidono.');
+                    return;
+                }
+                
+                if (password.length < 6) {
+                    alert('La password deve essere di almeno 6 caratteri.');
+                    return;
+                }
+                
+                // Controlla se l'email è già registrata
+                const existingUser = users.find(u => u.email === email);
+                if (existingUser) {
+                    alert('Questa email è già registrata. Usa un\'email diversa o accedi con le tue credenziali.');
+                    return;
+                }
+                
+                // Trova l'alloggio selezionato
+                const selectedRoom = rooms.find(r => r.id == roomId);
+                if (!selectedRoom) {
+                    alert('Alloggio non trovato.');
+                    return;
+                }
+                
+                // Crea nuovo ID utente
+                const newUserId = users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 1;
+                
+                // Aggiungi il nuovo utente
+                const newUser = {
+                    id: newUserId,
+                    email: email,
+                    password: password,
+                    name: name,
+                    roomId: selectedRoom.id,
+                    roomCode: selectedRoom.code,
+                    phone: phone,
+                    type: "guest",
+                    registered: getFormattedDate(new Date())
+                };
+                
+                users.push(newUser);
+                
+                // Login automatico
+                currentUser = newUser;
+                isAdmin = false;
+                
+                showApp();
+                updateGuestUI();
+                renderLaundryEquipment();
+                renderGymEquipment();
+                renderMyBookings();
+                populateEquipmentSelects();
+                setupEquipmentSelection();
+                
+                // Imposta date minime
+                const today = getFormattedDate(new Date());
+                document.getElementById('laundry-date').min = today;
+                document.getElementById('laundry-date').value = today;
+                
+                document.getElementById('gym-date').min = today;
+                document.getElementById('gym-date').value = today;
+                
+                // Reset form registrazione
+                document.getElementById('register-name').value = '';
+                document.getElementById('register-email').value = '';
+                document.getElementById('register-password').value = '';
+                document.getElementById('register-confirm-password').value = '';
+                document.getElementById('register-room').value = '';
+                document.getElementById('register-phone').value = '';
+                
+                alert('Registrazione completata con successo! Ora sei loggato nel sistema.');
+            });
+            
+            // Login amministratore
+            document.getElementById('admin-login-btn').addEventListener('click', function() {
+                const username = document.getElementById('admin-username').value;
+                const password = document.getElementById('admin-password').value;
+                
+                if (!username || !password) {
+                    alert('Per favore, compila tutti i campi.');
+                    return;
+                }
+                
+                // Verifica credenziali admin
+                const admin = adminUsers.find(a => 
+                    a.username === username && 
+                    a.password === password
+                );
+                
+                if (!admin) {
+                    alert('Credenziali amministratore non valide.');
+                    return;
+                }
+                
+                // Login riuscito
+                currentUser = admin;
+                isAdmin = true;
+                
+                showApp();
+                updateAdminUI();
+                renderAdminLaundryList();
+                renderAdminGymList();
+                renderAdminRoomsList();
+                renderAdminBookings();
+                renderAdminUsersList();
+                updateAdminStats();
+            });
+            
+            // Logout
+            document.getElementById('guest-logout-btn').addEventListener('click', function(e) {
+                e.preventDefault();
+                logout();
+            });
+            
+            document.getElementById('admin-logout-btn').addEventListener('click', function(e) {
+                e.preventDefault();
+                logout();
+            });
+            
+            // Navbar per ospiti
+            document.querySelectorAll('#guest-app .nav-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    // Aggiorna la navigazione
+                    document.querySelectorAll('#guest-app .nav-item').forEach(nav => {
+                        nav.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    // Mostra il tab selezionato
+                    document.querySelectorAll('#guest-app .tab-content').forEach(tab => {
+                        tab.classList.remove('active');
+                    });
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+            
+            // Navbar per admin
+            document.querySelectorAll('#admin-app .nav-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    // Aggiorna la navigación
+                    document.querySelectorAll('#admin-app .nav-item').forEach(nav => {
+                        nav.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    // Mostra il tab selezionato
+                    document.querySelectorAll('#admin-app .tab-content').forEach(tab => {
+                        tab.classList.remove('active');
+                    });
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+            
+            // Selezione tipo lavanderia
+            document.getElementById('laundry-type').addEventListener('change', function() {
+                const type = this.value;
+                const equipmentSelect = document.getElementById('laundry-equipment-select');
+                const visualSelection = document.getElementById('laundry-equipment-visual');
+                
+                if (type) {
+                    // Popola la select con le attrezzature del tipo selezionato
+                    populateLaundryEquipmentSelect(type);
+                    equipmentSelect.disabled = false;
+                    
+                    // Mostra la selezione visiva
+                    renderLaundryEquipmentVisualSelection(type);
+                    visualSelection.style.display = 'block';
+                } else {
+                    equipmentSelect.innerHTML = '<option value="">Prima seleziona il tipo</option>';
+                    equipmentSelect.disabled = true;
+                    visualSelection.style.display = 'none';
+                    selectedLaundryEquipmentId = null;
+                }
+            });
+            
+            // Selezione attrezzatura lavanderia dalla select
+            document.getElementById('laundry-equipment-select').addEventListener('change', function() {
+                selectedLaundryEquipmentId = this.value;
+                
+                // Aggiorna la selezione visiva
+                updateLaundryVisualSelection(selectedLaundryEquipmentId);
+            });
+            
+            // Selezione tipo palestra
+            document.getElementById('gym-equipment-type').addEventListener('change', function() {
+                const type = this.value;
+                const equipmentSelect = document.getElementById('gym-equipment-select');
+                const visualSelection = document.getElementById('gym-equipment-visual');
+                
+                if (type) {
+                    // Popola la select con le attrezzature del tipo selezionato
+                    populateGymEquipmentSelect(type);
+                    equipmentSelect.disabled = false;
+                    
+                    // Mostra la selezione visiva
+                    renderGymEquipmentVisualSelection(type);
+                    visualSelection.style.display = 'block';
+                } else {
+                    equipmentSelect.innerHTML = '<option value="">Prima seleziona il tipo</option>';
+                    equipmentSelect.disabled = true;
+                    visualSelection.style.display = 'none';
+                    selectedGymEquipmentId = null;
+                }
+            });
+            
+            // Selezione attrezzatura palestra dalla select
+            document.getElementById('gym-equipment-select').addEventListener('change', function() {
+                selectedGymEquipmentId = this.value;
+                
+                // Aggiorna la selezione visiva
+                updateGymVisualSelection(selectedGymEquipmentId);
+            });
+            
+            // Prenotazione lavanderia (ospite)
+            document.getElementById('book-laundry-btn').addEventListener('click', function() {
+                const type = document.getElementById('laundry-type').value;
+                const equipmentId = document.getElementById('laundry-equipment-select').value;
+                const date = document.getElementById('laundry-date').value;
+                const startTime = document.getElementById('laundry-start').value;
+                const endTime = document.getElementById('laundry-end').value;
+                
+                // Validazione
+                if (!type || !equipmentId || !date || !startTime || !endTime) {
+                    alert('Per favore, compila tutti i campi.');
+                    return;
+                }
+                
+                if (startTime >= endTime) {
+                    alert('L\'ora di fine deve essere successiva all\'ora di inizio.');
+                    return;
+                }
+                
+                // Trova l'attrezzatura selezionata
+                const equipment = laundryEquipment.find(eq => eq.id === equipmentId);
+                if (!equipment) {
+                    alert('Apparecchio non trovato.');
+                    return;
+                }
+                
+                // Controlla se è già prenotata per l'orario selezionato
+                const isBooked = bookings.some(booking => 
+                    booking.equipmentId === equipment.id && 
+                    booking.date === date &&
+                    booking.status === "active" &&
+                    ((startTime >= booking.startTime && startTime < booking.endTime) ||
+                     (endTime > booking.startTime && endTime <= booking.endTime) ||
+                     (startTime <= booking.startTime && endTime >= booking.endTime))
+                );
+                
+                if (isBooked) {
+                    alert('Questo apparecchio è già prenotato per l\'orario selezionato. Prova con un orario diverso.');
+                    return;
+                }
+                
+                // Crea la prenotazione
+                const newBooking = {
+                    id: generateId(),
+                    type: "laundry",
+                    equipmentType: type,
+                    equipmentId: equipment.id,
+                    equipmentName: equipment.name,
+                    userId: currentUser.id,
+                    userName: currentUser.name,
+                    userRoomId: currentUser.roomId,
+                    userRoomCode: currentUser.roomCode,
+                    date: date,
+                    startTime: formatTime(startTime),
+                    endTime: formatTime(endTime),
+                    status: "active"
+                };
+                
+                bookings.push(newBooking);
+                
+                // Reset form
+                const today = getFormattedDate(new Date());
+                document.getElementById('laundry-date').value = today;
+                document.getElementById('laundry-start').value = "10:00";
+                document.getElementById('laundry-end').value = "12:00";
+                document.getElementById('laundry-type').value = "";
+                document.getElementById('laundry-equipment-select').innerHTML = '<option value="">Prima seleziona il tipo</option>';
+                document.getElementById('laundry-equipment-select').disabled = true;
+                document.getElementById('laundry-equipment-visual').style.display = 'none';
+                selectedLaundryEquipmentId = null;
+                
+                // Aggiorna l'interfaccia
+                renderLaundryEquipment();
+                renderMyBookings();
+                
+                alert(`Prenotazione confermata per ${equipment.name} il ${date} dalle ${formatTime(startTime)} alle ${formatTime(endTime)}`);
+            });
+            
+            // Prenotazione palestra (ospite)
+            document.getElementById('book-gym-btn').addEventListener('click', function() {
+                const type = document.getElementById('gym-equipment-type').value;
+                const equipmentId = document.getElementById('gym-equipment-select').value;
+                const date = document.getElementById('gym-date').value;
+                const startTime = document.getElementById('gym-start').value;
+                const endTime = document.getElementById('gym-end').value;
+                
+                // Validazione
+                if (!type || !equipmentId || !date || !startTime || !endTime) {
+                    alert('Per favore, compila tutti i campi.');
+                    return;
+                }
+                
+                if (startTime >= endTime) {
+                    alert('L\'ora di fine deve essere successiva all\'ora di inizio.');
+                    return;
+                }
+                
+                // Trova l'attrezzatura
+                const equipment = gymEquipment.find(eq => eq.id === equipmentId);
+                if (!equipment) {
+                    alert('Attrezzatura non trovata.');
+                    return;
+                }
+                
+                // Controlla se è già prenotata per l'orario selezionato
+                const isBooked = bookings.some(booking => 
+                    booking.equipmentId === equipment.id && 
+                    booking.date === date &&
+                    booking.status === "active" &&
+                    ((startTime >= booking.startTime && startTime < booking.endTime) ||
+                     (endTime > booking.startTime && endTime <= booking.endTime) ||
+                     (startTime <= booking.startTime && endTime >= booking.endTime))
+                );
+                
+                if (isBooked) {
+                    alert('Questa attrezzatura è già prenotata per l\'orario selezionato. Prova con un orario diverso.');
+                    return;
+                }
+                
+                // Crea la prenotazione
+                const newBooking = {
+                    id: generateId(),
+                    type: "gym",
+                    equipmentType: equipment.type,
+                    equipmentId: equipment.id,
+                    equipmentName: equipment.name,
+                    userId: currentUser.id,
+                    userName: currentUser.name,
+                    userRoomId: currentUser.roomId,
+                    userRoomCode: currentUser.roomCode,
+                    date: date,
+                    startTime: formatTime(startTime),
+                    endTime: formatTime(endTime),
+                    status: "active"
+                };
+                
+                bookings.push(newBooking);
+                
+                // Reset form
+                const today = getFormattedDate(new Date());
+                document.getElementById('gym-date').value = today;
+                document.getElementById('gym-start').value = "08:00";
+                document.getElementById('gym-end').value = "09:00";
+                document.getElementById('gym-equipment-type').value = "";
+                document.getElementById('gym-equipment-select').innerHTML = '<option value="">Prima seleziona il tipo</option>';
+                document.getElementById('gym-equipment-select').disabled = true;
+                document.getElementById('gym-equipment-visual').style.display = 'none';
+                selectedGymEquipmentId = null;
+                
+                // Aggiorna l'interfaccia
+                renderGymEquipment();
+                renderMyBookings();
+                
+                alert(`Prenotazione confermata per ${equipment.name} il ${date} dalle ${formatTime(startTime)} alle ${formatTime(endTime)}`);
+            });
+            
+            // Gestione modali admin
+            document.getElementById('add-laundry-btn').addEventListener('click', function() {
+                document.getElementById('add-laundry-modal').style.display = 'flex';
+            });
+            
+            document.getElementById('add-gym-equipment-btn').addEventListener('click', function() {
+                document.getElementById('add-gym-modal').style.display = 'flex';
+            });
+            
+            document.getElementById('add-room-btn').addEventListener('click', function() {
+                openAddRoomModal();
+            });
+            
+            document.getElementById('add-new-laundry-btn').addEventListener('click', function() {
+                document.getElementById('add-laundry-modal').style.display = 'flex';
+            });
+            
+            document.getElementById('add-new-gym-btn').addEventListener('click', function() {
+                document.getElementById('add-gym-modal').style.display = 'flex';
+            });
+            
+            document.getElementById('add-new-room-btn').addEventListener('click', function() {
+                openAddRoomModal();
+            });
+            
+            document.getElementById('view-all-bookings-btn').addEventListener('click', function() {
+                // Vai alla tab delle prenotazioni
+                document.querySelectorAll('#admin-app .nav-item').forEach(nav => {
+                    nav.classList.remove('admin-active');
+                });
+                document.querySelector('[data-tab="view-bookings"]').classList.add('admin-active');
+                
+                document.querySelectorAll('#admin-app .tab-content').forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                document.getElementById('view-bookings').classList.add('active');
+                
+                renderAdminBookings();
+            });
+            
+            const manageUsersBtn = document.getElementById('manage-users-btn');
+if (manageUsersBtn) {
+    manageUsersBtn.addEventListener('click', function() {
+        // Vai alla tab degli utenti
+        document.querySelectorAll('#admin-app .nav-item').forEach(nav => {
+            nav.classList.remove('admin-active');
+        });
+        document.querySelector('[data-tab="manage-users"]').classList.add('admin-active');
+        
+        document.querySelectorAll('#admin-app .tab-content').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        document.getElementById('manage-users').classList.add('active');
+        
+        renderAdminUsersList();
+    });
+}
+            
+            // Salva nuova attrezzatura lavanderia
+document.getElementById('save-laundry-btn').addEventListener('click', function() {
+    const type = document.getElementById('new-laundry-type').value;
+    const name = document.getElementById('new-laundry-name').value;
+    const position = document.getElementById('new-laundry-position').value;
+    const description = document.getElementById('new-laundry-description').value;
+    const editId = document.getElementById('edit-laundry-id') ? document.getElementById('edit-laundry-id').value : null;
+    
+    if (!name || !position) {
+        alert('Per favore, compila almeno il nome e la posizione.');
+        return;
+    }
+    
+    if (editId) {
+        // MODIFICA attrezzatura esistente
+        const index = laundryEquipment.findIndex(eq => eq.id === editId);
+        if (index !== -1) {
+            laundryEquipment[index] = {
+                ...laundryEquipment[index],
+                type: type,
+                name: name,
+                position: position,
+                description: description
+            };
+            
+            // Aggiorna anche le prenotazioni se il nome è cambiato
+            bookings.forEach(booking => {
+                if (booking.equipmentId === editId) {
+                    booking.equipmentName = name;
+                    if (booking.type === 'laundry') {
+                        booking.equipmentType = type;
+                    }
+                }
+            });
+            
+            alert('Attrezzatura modificata con successo!');
+        }
+    } else {
+        // AGGIUNGI nuova attrezzatura
+        const id = `${type}-${generateId().substring(0, 8)}`;
+        
+        laundryEquipment.push({
+            id: id,
+            name: name,
+            type: type,
+            position: position,
+            description: description,
+            addedBy: currentUser.username || 'admin'
+        });
+        
+        alert('Attrezzatura aggiunta con successo!');
+    }
+    
+    // Chiudi il modale
+    document.getElementById('add-laundry-modal').style.display = 'none';
+    
+    // Reset form e stato
+    document.getElementById('new-laundry-name').value = '';
+    document.getElementById('new-laundry-position').value = '';
+    document.getElementById('new-laundry-description').value = '';
+    
+    // Rimuovi l'ID di modifica se presente
+    const editInput = document.getElementById('edit-laundry-id');
+    if (editInput) {
+        editInput.value = '';
+    }
+    
+    // Ripristina il titolo del modale
+    document.querySelector('#add-laundry-modal .admin-title').textContent = 'Aggiungi Attrezzatura Lavanderia';
+    
+    // Aggiorna le interfacce
+    renderAdminLaundryList();
+    updateAdminStats();
+    
+    if (!isAdmin && currentUser) {
+        // Se siamo nella parte ospiti, aggiorna anche quella
+        populateEquipmentSelects();
+        renderLaundryEquipment();
+        setupEquipmentSelection();
+    }
+});
+            
+            // Salva nuova attrezzatura palestra
+            document.getElementById('save-gym-btn').addEventListener('click', function() {
+                const type = document.getElementById('new-gym-type').value;
+                const name = document.getElementById('new-gym-name').value;
+                const position = document.getElementById('new-gym-position').value;
+                const description = document.getElementById('new-gym-description').value;
+                
+                if (!name || !position) {
+                    alert('Per favore, compila almeno il nome e la posizione.');
+                    return;
+                }
+                
+                // Crea nuovo ID
+                const id = `${type}-${generateId().substring(0, 8)}`;
+                
+                // Aggiungi l'attrezzatura
+                gymEquipment.push({
+                    id: id,
+                    name: name,
+                    type: type,
+                    position: position,
+                    description: description,
+                    addedBy: currentUser.username
+                });
+                
+                // Chiudi il modale
+                document.getElementById('add-gym-modal').style.display = 'none';
+                
+                // Reset form
+                document.getElementById('new-gym-name').value = '';
+                document.getElementById('new-gym-position').value = '';
+                document.getElementById('new-gym-description').value = '';
+                
+                // Aggiorna le interfacce
+                renderAdminGymList();
+                updateAdminStats();
+                
+                if (!isAdmin) {
+                    // Se siamo nella parte ospiti, aggiorna anche quella
+                    populateEquipmentSelects();
+                    renderGymEquipment();
+                    setupEquipmentSelection();
+                }
+                
+                alert('Attrezzatura aggiunta con successo!');
+            });
+            
+            // Salva nuovo/modifica alloggio - FUNZIONE CORRETTA
+            document.getElementById('save-room-btn').addEventListener('click', function() {
+                const roomId = document.getElementById('edit-room-id').value;
+                const code = document.getElementById('new-room-code').value;
+                const name = document.getElementById('new-room-name').value;
+                const type = document.getElementById('new-room-type').value;
+                const capacity = document.getElementById('new-room-capacity').value;
+                const floor = document.getElementById('new-room-floor').value;
+                const features = document.getElementById('new-room-features').value;
+                const status = document.getElementById('new-room-status').value;
+                
+                // Validazione
+                if (!code || !name || !type || !capacity) {
+                    alert('Per favore, compila tutti i campi obbligatori.');
+                    return;
+                }
+                
+                // Controlla se il codice alloggio è già usato (solo per nuovo alloggio)
+                if (!roomId) {
+                    const existingRoom = rooms.find(r => r.code === code);
+                    if (existingRoom) {
+                        alert(`Il codice alloggio "${code}" è già in uso. Usa un codice diverso.`);
+                        return;
+                    }
+                }
+                
+                if (roomId) {
+                    // Modifica alloggio esistente
+                    const index = rooms.findIndex(r => r.id === parseInt(roomId));
+                    
+                    if (index !== -1) {
+                        rooms[index] = {
+                            ...rooms[index],
+                            code: code,
+                            name: name,
+                            type: type,
+                            capacity: parseInt(capacity),
+                            floor: floor,
+                            features: features,
+                            status: status
+                        };
+                        
+                        // Aggiorna anche i riferimenti negli utenti
+                        users.forEach(user => {
+                            if (user.roomId === parseInt(roomId)) {
+                                user.roomCode = code;
+                            }
+                        });
+                        
+                        // Aggiorna anche i riferimenti nelle prenotazioni
+                        bookings.forEach(booking => {
+                            if (booking.userRoomId === parseInt(roomId)) {
+                                booking.userRoomCode = code;
+                            }
+                        });
+                        
+                        alert('Alloggio modificato con successo!');
+                    } else {
+                        alert('Errore: alloggio non trovato.');
+                        return;
+                    }
+                } else {
+                    // Crea nuovo ID alloggio
+                    const newRoomId = rooms.length > 0 ? Math.max(...rooms.map(r => r.id)) + 1 : 1;
+                    
+                    // Aggiungi il nuovo alloggio
+                    rooms.push({
+                        id: newRoomId,
+                        code: code,
+                        name: name,
+                        type: type,
+                        capacity: parseInt(capacity),
+                        floor: floor,
+                        features: features,
+                        status: status,
+                        created: getFormattedDate(new Date())
+                    });
+                    
+                    alert('Alloggio aggiunto con successo!');
+                }
+                
+                // Chiudi il modale - MODIFICA IMPORTANTE
+                const addRoomModal = document.getElementById('add-room-modal');
+                if (addRoomModal) {
+                    addRoomModal.style.display = 'none';
+                }
+                
+                // Reset form
+                document.getElementById('edit-room-id').value = '';
+                document.getElementById('new-room-code').value = '';
+                document.getElementById('new-room-name').value = '';
+                document.getElementById('new-room-type').value = 'single';
+                document.getElementById('new-room-capacity').value = '2';
+                document.getElementById('new-room-floor').value = '';
+                document.getElementById('new-room-features').value = '';
+                document.getElementById('new-room-status').value = 'active';
+                document.getElementById('room-modal-title').textContent = 'Aggiungi Nuovo Alloggio';
+                
+                // Aggiorna le interfacce
+                renderAdminRoomsList();
+                updateAdminStats();
+                populateRoomSelects();
+                
+                // Se siamo nella parte ospiti, aggiorna anche quella
+                if (!isAdmin && currentUser) {
+                    // Aggiorna l'UI dell'ospite se l'alloggio corrente è stato modificato
+                    if (roomId && currentUser.roomId === parseInt(roomId)) {
+                        updateGuestUI();
+                    }
+                }
+            });
+function closeLaundryModal() {
+    document.getElementById('add-laundry-modal').style.display = 'none';
+    
+    // Reset form
+    document.getElementById('new-laundry-name').value = '';
+    document.getElementById('new-laundry-position').value = '';
+    document.getElementById('new-laundry-description').value = '';
+    
+    // Rimuovi l'ID di modifica se presente
+    const editInput = document.getElementById('edit-laundry-id');
+    if (editInput) {
+        editInput.value = '';
+    }
+    
+    // Ripristina il titolo del modale
+    document.querySelector('#add-laundry-modal .admin-title').textContent = 'Aggiungi Attrezzatura Lavanderia';
+}            
+            // Chiudi modali
+  document.querySelectorAll('.close-modal').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const modal = this.closest('.modal');
+        if (modal) {
+            if (modal.id === 'add-laundry-modal') {
+                closeLaundryModal();
+            } else {
+                modal.style.display = 'none';
+            }
+        }
+    });
+});
+            
+            // Chiudi modale cliccando fuori
+             window.addEventListener('click', function(e) {
+                if (e.target.classList.contains('modal')) {
+                    // Chiudi tutti i modali quando si clicca fuori
+                    document.querySelectorAll('.modal').forEach(modal => {
+                        modal.style.display = 'none';
+                    });
+                }
+            });
+        
+        // Funzioni di gestione UI
+        function showApp() {
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('app-container').style.display = 'block';
+            
+            if (isAdmin) {
+                document.getElementById('guest-app').style.display = 'none';
+                document.getElementById('admin-app').style.display = 'block';
+            } else {
+                document.getElementById('guest-app').style.display = 'block';
+                document.getElementById('admin-app').style.display = 'none';
+            }
+        }
+        
+        function logout() {
+            currentUser = null;
+            isAdmin = false;
+            selectedLaundryEquipmentId = null;
+            selectedGymEquipmentId = null;
+            
+            // Reset form login
+            document.getElementById('guest-email').value = '';
+            document.getElementById('guest-password').value = '';
+            document.getElementById('guest-room').value = '';
+            document.getElementById('admin-username').value = '';
+            document.getElementById('admin-password').value = '';
+            
+            // Mostra login screen
+            document.getElementById('login-screen').style.display = 'flex';
+            document.getElementById('app-container').style.display = 'none';
+            
+            // Ripristina tab login
+            document.querySelectorAll('.login-tab').forEach(t => {
+                t.classList.remove('active');
+                if (t.getAttribute('data-tab') === 'admin') {
+                    t.classList.remove('admin-tab');
+                }
+            });
+            document.querySelector('[data-tab="guest"]').classList.add('active');
+            
+            document.getElementById('guest-login-form').style.display = 'block';
+            document.getElementById('guest-register-form').style.display = 'none';
+            document.getElementById('admin-login-form').style.display = 'none';
+        }
+        
+        function updateGuestUI() {
+            const userRoom = rooms.find(r => r.id === currentUser.roomId);
+            document.getElementById('current-guest-name').textContent = currentUser.name;
+            document.getElementById('current-guest-room').textContent = `Alloggio ${userRoom ? userRoom.code : currentUser.roomCode}`;
+        }
+        
+        function updateAdminUI() {
+            document.getElementById('current-admin-name').textContent = currentUser.name;
+        }
+        
+        function populateEquipmentSelects() {
+            // Popola select lavanderia
+            const laundrySelect = document.getElementById('laundry-type');
+            laundrySelect.innerHTML = '<option value="">Seleziona tipo</option>';
+            laundrySelect.innerHTML += '<option value="washer">Lavatrice</option>';
+            laundrySelect.innerHTML += '<option value="dryer">Asciugatrice</option>';
+        }
+        
+        function populateLaundryEquipmentSelect(type) {
+            const equipmentSelect = document.getElementById('laundry-equipment-select');
+            const filteredEquipment = laundryEquipment.filter(eq => eq.type === type);
+            
+            equipmentSelect.innerHTML = '<option value="">Seleziona apparecchio</option>';
+            
+            filteredEquipment.forEach(eq => {
+                const option = document.createElement('option');
+                option.value = eq.id;
+                option.textContent = eq.name;
+                equipmentSelect.appendChild(option);
+            });
+        }
+        
+        function populateGymEquipmentSelect(type) {
+            const equipmentSelect = document.getElementById('gym-equipment-select');
+            const filteredEquipment = gymEquipment.filter(eq => eq.type === type);
+            
+            equipmentSelect.innerHTML = '<option value="">Seleziona attrezzatura</option>';
+            
+            filteredEquipment.forEach(eq => {
+                const option = document.createElement('option');
+                option.value = eq.id;
+                option.textContent = eq.name;
+                equipmentSelect.appendChild(option);
+            });
+        }
+        
+        function setupEquipmentSelection() {
+            // Resetta le selezioni
+            selectedLaundryEquipmentId = null;
+            selectedGymEquipmentId = null;
+        }
+        
+        function renderLaundryEquipmentVisualSelection(type) {
+            const container = document.getElementById('laundry-equipment-selection');
+            const filteredEquipment = laundryEquipment.filter(eq => eq.type === type);
+            const date = document.getElementById('laundry-date').value;
+            
+            if (filteredEquipment.length === 0) {
+                container.innerHTML = '<p>Nessun apparecchio disponibile di questo tipo.</p>';
+                return;
+            }
+            
+            container.innerHTML = '';
+            
+            filteredEquipment.forEach(eq => {
+                // Controlla se l'apparecchio è prenotato per la data selezionata
+                const isBooked = bookings.some(booking => 
+                    booking.equipmentId === eq.id && 
+                    booking.date === date &&
+                    booking.status === "active"
+                );
+                
+                const option = document.createElement('div');
+                option.className = `equipment-option ${isBooked ? 'unavailable' : ''} ${selectedLaundryEquipmentId === eq.id ? 'selected' : ''}`;
+                option.setAttribute('data-id', eq.id);
+                
+                if (!isBooked) {
+                    option.addEventListener('click', function() {
+                        selectedLaundryEquipmentId = eq.id;
+                        document.getElementById('laundry-equipment-select').value = eq.id;
+                        updateLaundryVisualSelection(eq.id);
+                    });
+                }
+                
+                option.innerHTML = `
+                    <div style="font-size: 1.2rem; margin-bottom: 0.5rem;">
+                        <i class="fas fa-${eq.type === 'washer' ? 'soap' : 'wind'}"></i>
+                    </div>
+                    <div style="font-weight: bold;">${eq.name}</div>
+                    <div style="font-size: 0.8rem; margin-top: 0.5rem;">${eq.position}</div>
+                    <div style="font-size: 0.8rem;">${isBooked ? 'Prenotato' : 'Disponibile'}</div>
+                `;
+                
+                container.appendChild(option);
+            });
+        }
+        
+        function updateLaundryVisualSelection(equipmentId) {
+            // Rimuovi la classe selected da tutti
+            document.querySelectorAll('#laundry-equipment-selection .equipment-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            // Aggiungi la classe selected a quello selezionato
+            const selectedOption = document.querySelector(`#laundry-equipment-selection .equipment-option[data-id="${equipmentId}"]`);
+            if (selectedOption && !selectedOption.classList.contains('unavailable')) {
+                selectedOption.classList.add('selected');
+            }
+        }
+        
+        function renderGymEquipmentVisualSelection(type) {
+            const container = document.getElementById('gym-equipment-selection');
+            const filteredEquipment = gymEquipment.filter(eq => eq.type === type);
+            const date = document.getElementById('gym-date').value;
+            
+            if (filteredEquipment.length === 0) {
+                container.innerHTML = '<p>Nessuna attrezzatura disponibile di questo tipo.</p>';
+                return;
+            }
+            
+            container.innerHTML = '';
+            
+            filteredEquipment.forEach(eq => {
+                // Controlla se l'attrezzatura è prenotata per la data selezionata
+                const isBooked = bookings.some(booking => 
+                    booking.equipmentId === eq.id && 
+                    booking.date === date &&
+                    booking.status === "active"
+                );
+                
+                const option = document.createElement('div');
+                option.className = `equipment-option ${isBooked ? 'unavailable' : ''} ${selectedGymEquipmentId === eq.id ? 'selected' : ''}`;
+                option.setAttribute('data-id', eq.id);
+                
+                if (!isBooked) {
+                    option.addEventListener('click', function() {
+                        selectedGymEquipmentId = eq.id;
+                        document.getElementById('gym-equipment-select').value = eq.id;
+                        updateGymVisualSelection(eq.id);
+                    });
+                }
+                
+                option.innerHTML = `
+                    <div style="font-size: 1.2rem; margin-bottom: 0.5rem;">
+                        <i class="fas fa-dumbbell"></i>
+                    </div>
+                    <div style="font-weight: bold;">${eq.name}</div>
+                    <div style="font-size: 0.8rem; margin-top: 0.5rem;">${eq.position}</div>
+                    <div style="font-size: 0.8rem;">${isBooked ? 'Prenotato' : 'Disponibile'}</div>
+                `;
+                
+                container.appendChild(option);
+            });
+        }
+        
+        function updateGymVisualSelection(equipmentId) {
+            // Rimuovi la classe selected da tutti
+            document.querySelectorAll('#gym-equipment-selection .equipment-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            // Aggiungi la classe selected a quello selezionato
+            const selectedOption = document.querySelector(`#gym-equipment-selection .equipment-option[data-id="${equipmentId}"]`);
+            if (selectedOption && !selectedOption.classList.contains('unavailable')) {
+                selectedOption.classList.add('selected');
+            }
+        }
+        
+        // Funzioni di rendering per ospiti
+        function renderLaundryEquipment() {
+            const container = document.getElementById('laundry-equipment');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            laundryEquipment.forEach(eq => {
+                // Trova le prenotazioni per questa apparecchiatura
+                const equipmentBookings = bookings.filter(booking => 
+                    booking.equipmentId === eq.id && 
+                    booking.status === "active"
+                );
+                
+                // Determina se è attualmente disponibile
+                const now = new Date();
+                const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+                const today = getFormattedDate(now);
+                
+                const isCurrentlyBooked = equipmentBookings.some(booking => 
+                    booking.date === today &&
+                    currentTime >= booking.startTime &&
+                    currentTime <= booking.endTime
+                );
+                
+                const card = document.createElement('div');
+                card.className = 'equipment-card';
+                
+                card.innerHTML = `
+                    <div class="equipment-header">
+                        <h3>${eq.name}</h3>
+                        <div class="equipment-status ${isCurrentlyBooked ? 'busy' : ''}">
+                            ${isCurrentlyBooked ? 'Occupato' : 'Disponibile'}
+                        </div>
+                    </div>
+                    <div class="equipment-body">
+                        <div class="equipment-info">
+                            <div><i class="fas fa-${eq.type === 'washer' ? 'soap' : 'wind'}"></i> ${eq.type === 'washer' ? 'Lavatrice' : 'Asciugatrice'}</div>
+                            <div><i class="fas fa-map-marker-alt"></i> ${eq.position}</div>
+                        </div>
+                        <p><small>${eq.description}</small></p>
+                        
+                        ${equipmentBookings.length > 0 ? `
+                        <div class="booking-list">
+                            <h4>Prenotazioni:</h4>
+                            ${equipmentBookings.map(booking => `
+                                <div class="booking-item ${booking.userId === currentUser.id ? 'user-booking' : ''}">
+                                    <div>
+                                        <div><strong>${booking.date}</strong> ${booking.startTime} - ${booking.endTime}</div>
+                                        <div><small>${booking.userName} (Alloggio ${booking.userRoomCode})</small></div>
+                                    </div>
+                                    ${booking.userId === currentUser.id ? `
+                                    <div class="booking-actions">
+                                        <button class="btn-edit" data-id="${booking.id}">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn-delete" data-id="${booking.id}">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                    ` : ''}
+                                </div>
+                            `).join('')}
+                        </div>
+                        ` : '<p>Nessuna prenotazione attiva</p>'}
+                    </div>
+                `;
+                
+                container.appendChild(card);
+            });
+            
+            // Aggiungi event listeners per i pulsanti di modifica/eliminazione
+            document.querySelectorAll('.btn-edit').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const bookingId = this.getAttribute('data-id');
+                    openEditModal(bookingId);
+                });
+            });
+            
+            document.querySelectorAll('.btn-delete').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const bookingId = this.getAttribute('data-id');
+                    if (confirm('Sei sicuro di voler cancellare questa prenotazione?')) {
+                        deleteBooking(bookingId);
+                    }
+                });
+            });
+        }
+        
+        function renderGymEquipment() {
+            const container = document.getElementById('gym-equipment-list');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            gymEquipment.forEach(eq => {
+                // Trova le prenotazioni per questa attrezzatura
+                const equipmentBookings = bookings.filter(booking => 
+                    booking.equipmentId === eq.id && 
+                    booking.status === "active"
+                );
+                
+                // Determina se è attualmente disponibile
+                const now = new Date();
+                const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+                const today = getFormattedDate(now);
+                
+                const isCurrentlyBooked = equipmentBookings.some(booking => 
+                    booking.date === today &&
+                    currentTime >= booking.startTime &&
+                    currentTime <= booking.endTime
+                );
+                
+                const card = document.createElement('div');
+                card.className = 'equipment-card';
+                
+                card.innerHTML = `
+                    <div class="equipment-header">
+                        <h3>${eq.name}</h3>
+                        <div class="equipment-status ${isCurrentlyBooked ? 'busy' : ''}">
+                            ${isCurrentlyBooked ? 'Occupato' : 'Disponibile'}
+                        </div>
+                    </div>
+                    <div class="equipment-body">
+                        <div class="equipment-info">
+                            <div><i class="fas fa-dumbbell"></i> ${eq.type === 'treadmill' ? 'Tapis roulant' : 
+                                  eq.type === 'bike' ? 'Bicicletta' : 
+                                  eq.type === 'weights' ? 'Pesi' : 
+                                  eq.type === 'multistation' ? 'Multistazione' : 
+                                  eq.type === 'bench' ? 'Panca' : 'Attrezzatura'}</div>
+                            <div><i class="fas fa-map-marker-alt"></i> ${eq.position}</div>
+                        </div>
+                        <p><small>${eq.description}</small></p>
+                        
+                        ${equipmentBookings.length > 0 ? `
+                        <div class="booking-list">
+                            <h4>Prenotazioni:</h4>
+                            ${equipmentBookings.map(booking => `
+                                <div class="booking-item ${booking.userId === currentUser.id ? 'user-booking' : ''}">
+                                    <div>
+                                        <div><strong>${booking.date}</strong> ${booking.startTime} - ${booking.endTime}</div>
+                                        <div><small>${booking.userName} (Alloggio ${booking.userRoomCode})</small></div>
+                                    </div>
+                                    ${booking.userId === currentUser.id ? `
+                                    <div class="booking-actions">
+                                        <button class="btn-edit" data-id="${booking.id}">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn-delete" data-id="${booking.id}">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                    ` : ''}
+                                </div>
+                            `).join('')}
+                        </div>
+                        ` : '<p>Nessuna prenotazione attiva</p>'}
+                    </div>
+                `;
+                
+                container.appendChild(card);
+            });
+            
+            // Aggiungi event listeners per i pulsanti di modifica/eliminazione
+            document.querySelectorAll('.btn-edit').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const bookingId = this.getAttribute('data-id');
+                    openEditModal(bookingId);
+                });
+            });
+            
+            document.querySelectorAll('.btn-delete').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const bookingId = this.getAttribute('data-id');
+                    if (confirm('Sei sicuro di voler cancellare questa prenotazione?')) {
+                        deleteBooking(bookingId);
+                    }
+                });
+            });
+        }
+        
+        function renderMyBookings() {
+            const container = document.getElementById('my-bookings-list');
+            if (!container) return;
+            
+            const myBookings = bookings.filter(booking => 
+                booking.userId === currentUser.id && booking.status === "active"
+            );
+            
+            if (myBookings.length === 0) {
+                container.innerHTML = '<p>Non hai prenotazioni attive.</p>';
+                return;
+            }
+            
+            container.innerHTML = '';
+            
+            // Separa prenotazioni lavanderia e palestra
+            const laundryBookings = myBookings.filter(b => b.type === 'laundry');
+            const gymBookings = myBookings.filter(b => b.type === 'gym');
+            
+            if (laundryBookings.length > 0) {
+                const section = document.createElement('div');
+                section.innerHTML = `
+                    <h3><i class="fas fa-tshirt"></i> Prenotazioni Lavanderia</h3>
+                    <div class="booking-list">
+                        ${laundryBookings.map(booking => `
+                            <div class="booking-item user-booking">
+                                <div>
+                                    <div><strong>${booking.equipmentName}</strong></div>
+                                    <div>${booking.date} ${booking.startTime} - ${booking.endTime}</div>
+                                </div>
+                                <div class="booking-actions">
+                                    <button class="btn-edit" data-id="${booking.id}">
+                                        <i class="fas fa-edit"></i> Modifica
+                                    </button>
+                                    <button class="btn-delete" data-id="${booking.id}">
+                                        <i class="fas fa-trash"></i> Elimina
+                                    </button>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                container.appendChild(section);
+            }
+            
+            if (gymBookings.length > 0) {
+                const section = document.createElement('div');
+                section.innerHTML = `
+                    <h3><i class="fas fa-dumbbell"></i> Prenotazioni Palestra</h3>
+                    <div class="booking-list">
+                        ${gymBookings.map(booking => `
+                            <div class="booking-item user-booking">
+                                <div>
+                                    <div><strong>${booking.equipmentName}</strong></div>
+                                    <div>${booking.date} ${booking.startTime} - ${booking.endTime}</div>
+                                </div>
+                                <div class="booking-actions">
+                                    <button class="btn-edit" data-id="${booking.id}">
+                                        <i class="fas fa-edit"></i> Modifica
+                                    </button>
+                                    <button class="btn-delete" data-id="${booking.id}">
+                                        <i class="fas fa-trash"></i> Elimina
+                                    </button>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                container.appendChild(section);
+            }
+            
+            // Aggiungi event listeners
+            document.querySelectorAll('.btn-edit').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const bookingId = this.getAttribute('data-id');
+                    openEditModal(bookingId);
+                });
+            });
+            
+            document.querySelectorAll('.btn-delete').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const bookingId = this.getAttribute('data-id');
+                    if (confirm('Sei sicuro di voler cancellare questa prenotazione?')) {
+                        deleteBooking(bookingId);
+                    }
+                });
+            });
+        }
+   function openEditLaundryModal(equipmentId) {
+    const equipment = laundryEquipment.find(eq => eq.id === equipmentId);
+    if (!equipment) return;
+    
+    // Popola i campi del modale esistente (usa lo stesso modale dell'aggiunta)
+    document.getElementById('new-laundry-type').value = equipment.type;
+    document.getElementById('new-laundry-name').value = equipment.name;
+    document.getElementById('new-laundry-position').value = equipment.position;
+    document.getElementById('new-laundry-description').value = equipment.description || '';
+    
+    // Cambia il titolo del modale
+    document.querySelector('#add-laundry-modal .admin-title').textContent = 'Modifica Attrezzatura Lavanderia';
+    
+    // Salva l'ID dell'attrezzatura da modificare in un campo nascosto
+    let hiddenInput = document.getElementById('edit-laundry-id');
+    if (!hiddenInput) {
+        hiddenInput = document.createElement('input');
+        hiddenInput.type = 'hidden';
+        hiddenInput.id = 'edit-laundry-id';
+        document.querySelector('#add-laundry-modal .modal-content').appendChild(hiddenInput);
+    }
+    hiddenInput.value = equipmentId;
+    
+    // Mostra il modale
+    document.getElementById('add-laundry-modal').style.display = 'flex';
+}     
+        // Funzioni per admin
+        function renderAdminLaundryList() {
+            const container = document.getElementById('admin-laundry-list');
+            if (!container) return;
+            
+            if (laundryEquipment.length === 0) {
+                container.innerHTML = '<p>Nessuna attrezzatura di lavanderia registrata.</p>';
+                return;
+            }
+            
+            container.innerHTML = '';
+            
+            laundryEquipment.forEach(eq => {
+                const item = document.createElement('div');
+                item.className = 'equipment-list-item';
+                
+                item.innerHTML = `
+    <div>
+        <div><strong>${eq.name}</strong> - ${eq.type === 'washer' ? 'Lavatrice' : 'Asciugatrice'}</div>
+        <div><small>Posizione: ${eq.position}</small></div>
+        <div><small>${eq.description}</small></div>
+        <div><small>Aggiunto da: ${eq.addedBy}</small></div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+        <button class="btn-edit btn-small" data-id="${eq.id}" data-type="laundry">
+            <i class="fas fa-edit"></i> Modifica
+        </button>
+        <button class="btn-delete btn-small" data-id="${eq.id}" data-type="laundry">
+            <i class="fas fa-trash"></i> Rimuovi
+        </button>
+    </div>
+`;
+                
+                container.appendChild(item);
+            });
+            
+            // Aggiungi event listeners per rimuovere attrezzature
+            document.querySelectorAll('[data-type="laundry"].btn-delete').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const equipmentId = this.getAttribute('data-id');
+                    if (confirm('Sei sicuro di voler rimuovere questa attrezzatura? Questa azione non può essere annullata.')) {
+                        removeLaundryEquipment(equipmentId);
+                    }
+                });
+            });
+document.querySelectorAll('[data-type="laundry"].btn-edit').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const equipmentId = this.getAttribute('data-id');
+        openEditLaundryModal(equipmentId);
+    });
+});
+        }
+        
+        function renderAdminGymList() {
+            const container = document.getElementById('admin-gym-list');
+            if (!container) return;
+            
+            if (gymEquipment.length === 0) {
+                container.innerHTML = '<p>Nessuna attrezzatura di palestra registrata.</p>';
+                return;
+            }
+            
+            container.innerHTML = '';
+            
+            gymEquipment.forEach(eq => {
+                const item = document.createElement('div');
+                item.className = 'equipment-list-item';
+                
+                item.innerHTML = `
+                    <div>
+                        <div><strong>${eq.name}</strong> - ${eq.type === 'treadmill' ? 'Tapis roulant' : 
+                                  eq.type === 'bike' ? 'Bicicletta ellittica' : 
+                                  eq.type === 'weights' ? 'Pesi liberi' : 
+                                  eq.type === 'multistation' ? 'Multistazione' : 
+                                  eq.type === 'bench' ? 'Panca piana' : 'Altro'}</div>
+                        <div><small>Posizione: ${eq.position}</small></div>
+                        <div><small>${eq.description}</small></div>
+                        <div><small>Aggiunto da: ${eq.addedBy}</small></div>
+                    </div>
+                    <div>
+                        <button class="btn-delete btn-small" data-id="${eq.id}" data-type="gym">
+                            <i class="fas fa-trash"></i> Rimuovi
+                        </button>
+                    </div>
+                `;
+                
+                container.appendChild(item);
+            });
+            
+            // Aggiungi event listeners per rimuovere attrezzature
+            document.querySelectorAll('[data-type="gym"].btn-delete').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const equipmentId = this.getAttribute('data-id');
+                    if (confirm('Sei sicuro di voler rimuovere questa attrezzatura? Questa azione non può essere annullata.')) {
+                        removeGymEquipment(equipmentId);
+                    }
+                });
+            });
+        }
+        
+        function renderAdminRoomsList() {
+            const container = document.getElementById('admin-rooms-list');
+            if (!container) return;
+            
+            if (rooms.length === 0) {
+                container.innerHTML = '<p>Nessun alloggio registrato.</p>';
+                return;
+            }
+            
+            container.innerHTML = '';
+            
+            rooms.forEach(room => {
+                // Conta gli ospiti registrati in questo alloggio
+                const guestsInRoom = users.filter(u => u.roomId === room.id).length;
+                
+                const item = document.createElement('div');
+                item.className = 'room-list-item';
+                
+                // Determina il colore del bordo in base allo stato
+                let borderColor = 'var(--admin-color)';
+                if (room.status === 'maintenance') borderColor = 'var(--warning-color)';
+                if (room.status === 'reserved') borderColor = 'var(--info-color)';
+                
+                item.style.borderLeftColor = borderColor;
+                
+                item.innerHTML = `
+                    <div style="flex: 1;">
+                        <div><strong>${room.code} - ${room.name}</strong></div>
+                        <div class="room-info" style="margin-top: 0.5rem;">
+                            <div class="room-info-item">
+                                <div><small><i class="fas fa-bed"></i> Tipo: ${getRoomTypeLabel(room.type)}</small></div>
+                                <div><small><i class="fas fa-users"></i> Capacità: ${room.capacity} persone</small></div>
+                            </div>
+                            <div class="room-info-item">
+                                <div><small><i class="fas fa-layer-group"></i> Piano: ${room.floor}</small></div>
+                                <div><small><i class="fas fa-user-check"></i> Ospiti: ${guestsInRoom}</small></div>
+                            </div>
+                        </div>
+                        <div><small><i class="fas fa-info-circle"></i> ${room.features || 'Nessuna caratteristica specificata'}</small></div>
+                        <div><small><i class="fas fa-circle" style="color: ${room.status === 'active' ? 'var(--success-color)' : room.status === 'maintenance' ? 'var(--warning-color)' : 'var(--info-color)'}"></i> Stato: ${getRoomStatusLabel(room.status)}</small></div>
+                        <div><small><i class="fas fa-calendar-plus"></i> Creato: ${room.created}</small></div>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <button class="btn-edit btn-small" data-id="${room.id}" data-type="room">
+                            <i class="fas fa-edit"></i> Modifica
+                        </button>
+                        <button class="btn-delete btn-small" data-id="${room.id}" data-type="room">
+                            <i class="fas fa-trash"></i> Rimuovi
+                        </button>
+                    </div>
+                `;
+                
+                container.appendChild(item);
+            });
+            
+            // Aggiungi event listeners per modificare/rimuovere alloggi
+            document.querySelectorAll('[data-type="room"].btn-edit').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const roomId = parseInt(this.getAttribute('data-id'));
+                    openEditRoomModal(roomId);
+                });
+            });
+            
+            document.querySelectorAll('[data-type="room"].btn-delete').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const roomId = parseInt(this.getAttribute('data-id'));
+                    if (confirm('Sei sicuro di voler rimuovere questo alloggio? Tutti gli ospiti registrati in questo alloggio perderanno l\'accesso.')) {
+                        removeRoom(roomId);
+                    }
+                });
+            });
+        }
+        
+        function renderAdminUsersList() {
+            const container = document.getElementById('admin-users-list');
+            if (!container) return;
+            
+            if (users.length === 0) {
+                container.innerHTML = '<p>Nessun ospite registrato.</p>';
+                return;
+            }
+            
+            container.innerHTML = '';
+            
+            users.forEach(user => {
+                // Trova i dettagli dell'alloggio
+                const userRoom = rooms.find(r => r.id === user.roomId);
+                
+                // Conta le prenotazioni attive dell'utente
+                const userBookings = bookings.filter(b => b.userId === user.id && b.status === "active").length;
+                
+                const item = document.createElement('div');
+                item.className = 'equipment-list-item';
+                
+                item.innerHTML = `
+                    <div>
+                        <div><strong>${user.name}</strong></div>
+                        <div><small>Email: ${user.email}</small></div>
+                        <div><small>Alloggio: ${userRoom ? `${userRoom.code} - ${userRoom.name}` : user.roomCode}</small></div>
+                        <div><small>Telefono: ${user.phone || 'Non fornito'}</small></div>
+                        <div><small>Registrato il: ${user.registered}</small></div>
+                        <div><small>Prenotazioni attive: ${userBookings}</small></div>
+                    </div>
+                    <div>
+                        <button class="btn-delete btn-small" data-id="${user.id}" data-type="user">
+                            <i class="fas fa-trash"></i> Rimuovi
+                        </button>
+                    </div>
+                `;
+                
+                container.appendChild(item);
+            });
+            
+            // Aggiungi event listeners per rimuovere utenti
+            document.querySelectorAll('[data-type="user"].btn-delete').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const userId = parseInt(this.getAttribute('data-id'));
+                    if (confirm('Sei sicuro di voler rimuovere questo ospite? Tutte le sue prenotazioni saranno cancellate.')) {
+                        removeUser(userId);
+                    }
+                });
+            });
+        }
+        
+        function renderAdminBookings() {
+            const laundryContainer = document.getElementById('admin-laundry-bookings');
+            const gymContainer = document.getElementById('admin-gym-bookings');
+            
+            if (!laundryContainer || !gymContainer) return;
+            
+            const activeBookings = bookings.filter(b => b.status === "active");
+            const laundryBookings = activeBookings.filter(b => b.type === 'laundry');
+            const gymBookings = activeBookings.filter(b => b.type === 'gym');
+            
+            // Prenotazioni lavanderia
+            if (laundryBookings.length === 0) {
+                laundryContainer.innerHTML = '<p>Nessuna prenotazione attiva per la lavanderia.</p>';
+            } else {
+                laundryContainer.innerHTML = `
+                    <div class="booking-list">
+                        ${laundryBookings.map(booking => `
+                            <div class="booking-item">
+                                <div>
+                                    <div><strong>${booking.equipmentName}</strong></div>
+                                    <div>${booking.date} ${booking.startTime} - ${booking.endTime}</div>
+                                    <div><small>Prenotato da: ${booking.userName} (Alloggio ${booking.userRoomCode})</small></div>
+                                </div>
+                                <div class="booking-actions">
+                                    <button class="btn-delete btn-small" data-id="${booking.id}">
+                                        <i class="fas fa-trash"></i> Annulla
+                                    </button>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+            
+            // Prenotazioni palestra
+            if (gymBookings.length === 0) {
+                gymContainer.innerHTML = '<p>Nessuna prenotazione attiva per la palestra.</p>';
+            } else {
+                gymContainer.innerHTML = `
+                    <div class="booking-list">
+                        ${gymBookings.map(booking => `
+                            <div class="booking-item">
+                                <div>
+                                    <div><strong>${booking.equipmentName}</strong></div>
+                                    <div>${booking.date} ${booking.startTime} - ${booking.endTime}</div>
+                                    <div><small>Prenotato da: ${booking.userName} (Alloggio ${booking.userRoomCode})</small></div>
+                                </div>
+                                <div class="booking-actions">
+                                    <button class="btn-delete btn-small" data-id="${booking.id}">
+                                        <i class="fas fa-trash"></i> Annulla
+                                    </button>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+            
+            // Aggiungi event listeners per annullare prenotazioni
+            document.querySelectorAll('#admin-laundry-bookings .btn-delete, #admin-gym-bookings .btn-delete').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const bookingId = this.getAttribute('data-id');
+                    if (confirm('Sei sicuro di voler annullare questa prenotazione?')) {
+                        deleteBooking(bookingId);
+                        renderAdminBookings();
+                        updateAdminStats();
+                    }
+                });
+            });
+        }
+        
+        function updateAdminStats() {
+            // Conta alloggi attivi
+            const activeRooms = rooms.filter(r => r.status === "active").length;
+            document.getElementById('rooms-count').textContent = activeRooms;
+            
+            // Conta attrezzature
+            document.getElementById('laundry-count').textContent = laundryEquipment.length;
+            document.getElementById('gym-count').textContent = gymEquipment.length;
+            
+            // Conta prenotazioni attive
+            const activeBookings = bookings.filter(b => b.status === "active").length;
+            document.getElementById('active-bookings-count').textContent = activeBookings;
+            
+            // Conta ospiti
+            document.getElementById('users-count').textContent = users.length;
+            
+            // Calcola occupazione alloggi
+            const roomsWithGuests = new Set(users.map(u => u.roomId)).size;
+            const occupancyRate = activeRooms > 0 ? Math.round((roomsWithGuests / activeRooms) * 100) : 0;
+            document.getElementById('room-occupancy').textContent = `${occupancyRate}%`;
+        }
+        
+        // Funzioni di utilità per gli alloggi
+        function getRoomTypeLabel(type) {
+            const types = {
+                'single': 'Camera Singola',
+                'double': 'Camera Doppia',
+                'twin': 'Camera con due letti singoli',
+                'suite': 'Suite',
+                'apartment': 'Appartamento',
+                'family': 'Familiare'
+            };
+            return types[type] || type;
+        }
+        
+        function getRoomStatusLabel(status) {
+            const statuses = {
+                'active': 'Attivo e disponibile',
+                'maintenance': 'In manutenzione',
+                'reserved': 'Riservato'
+            };
+            return statuses[status] || status;
+        }
+        
+        function openAddRoomModal() {
+            // Reset del form
+            document.getElementById('edit-room-id').value = '';
+            document.getElementById('new-room-code').value = '';
+            document.getElementById('new-room-name').value = '';
+            document.getElementById('new-room-type').value = 'single';
+            document.getElementById('new-room-capacity').value = '2';
+            document.getElementById('new-room-floor').value = '';
+            document.getElementById('new-room-features').value = '';
+            document.getElementById('new-room-status').value = 'active';
+            document.getElementById('room-modal-title').textContent = 'Aggiungi Nuovo Alloggio';
+            
+            // Mostra il modale
+            document.getElementById('add-room-modal').style.display = 'flex';
+        }
+        
+        function openEditRoomModal(roomId) {
+            const room = rooms.find(r => r.id === roomId);
+            if (!room) return;
+            
+            // Popola il form con i dati dell'alloggio
+            document.getElementById('edit-room-id').value = room.id;
+            document.getElementById('new-room-code').value = room.code;
+            document.getElementById('new-room-name').value = room.name;
+            document.getElementById('new-room-type').value = room.type;
+            document.getElementById('new-room-capacity').value = room.capacity;
+            document.getElementById('new-room-floor').value = room.floor;
+            document.getElementById('new-room-features').value = room.features || '';
+            document.getElementById('new-room-status').value = room.status;
+            document.getElementById('room-modal-title').textContent = 'Modifica Alloggio';
+            
+            // Mostra il modale
+            document.getElementById('add-room-modal').style.display = 'flex';
+        }
+        
+        // Funzioni di utilità
+        function openEditModal(bookingId) {
+            const booking = bookings.find(b => b.id === bookingId);
+            if (!booking) return;
+            
+            // Popola il form di modifica
+            const form = document.getElementById('edit-booking-form');
+            
+            let equipmentSelect = '';
+            if (booking.type === 'laundry') {
+                equipmentSelect = `
+                    <div class="form-group">
+                        <label for="edit-equipment">Apparecchio:</label>
+                        <input type="text" id="edit-equipment" value="${booking.equipmentName}" readonly>
+                        <input type="hidden" id="edit-booking-type" value="${booking.type}">
+                        <input type="hidden" id="edit-equipment-id" value="${booking.equipmentId}">
+                    </div>
+                `;
+            } else {
+                equipmentSelect = `
+                    <div class="form-group">
+                        <label for="edit-equipment">Attrezzatura:</label>
+                        <input type="text" id="edit-equipment" value="${booking.equipmentName}" readonly>
+                        <input type="hidden" id="edit-booking-type" value="${booking.type}">
+                        <input type="hidden" id="edit-equipment-id" value="${booking.equipmentId}">
+                `;
+            }
+            
+            form.innerHTML = `
+                <input type="hidden" id="edit-booking-id" value="${booking.id}">
+                ${equipmentSelect}
+                <div class="form-group">
+                    <label for="edit-date">Data:</label>
+                    <input type="date" id="edit-date" value="${booking.date}">
+                </div>
+                <div class="form-group">
+                    <label for="edit-start">Ora di inizio:</label>
+                    <input type="time" id="edit-start" value="${booking.startTime}">
+                </div>
+                <div class="form-group">
+                    <label for="edit-end">Ora di fine:</label>
+                    <input type="time" id="edit-end" value="${booking.endTime}">
+                </div>
+            `;
+            
+            // Mostra il modale
+            document.getElementById('edit-modal').style.display = 'flex';
+            
+            // Salva le modifiche
+            document.getElementById('save-edit-btn').onclick = function() {
+                const updatedBooking = {
+                    ...booking,
+                    date: document.getElementById('edit-date').value,
+                    startTime: formatTime(document.getElementById('edit-start').value),
+                    endTime: formatTime(document.getElementById('edit-end').value)
+                };
+                
+                // Validazione
+                if (updatedBooking.startTime >= updatedBooking.endTime) {
+                    alert('L\'ora di fine deve essere successiva all\'ora di inizio.');
+                    return;
+                }
+                
+                // Controlla che non ci siano conflitti (escludendo la prenotazione corrente)
+                const hasConflict = bookings.some(b => 
+                    b.id !== updatedBooking.id &&
+                    b.equipmentId === updatedBooking.equipmentId && 
+                    b.date === updatedBooking.date &&
+                    b.status === "active" &&
+                    ((updatedBooking.startTime >= b.startTime && updatedBooking.startTime < b.endTime) ||
+                     (updatedBooking.endTime > b.startTime && updatedBooking.endTime <= b.endTime) ||
+                     (updatedBooking.startTime <= b.startTime && updatedBooking.endTime >= b.endTime))
+                );
+                
+                if (hasConflict) {
+                    alert('Questa attrezzatura è già prenotata per l\'orario selezionato. Prova con un orario diverso.');
+                    return;
+                }
+                
+                // Aggiorna la prenotazione
+                const index = bookings.findIndex(b => b.id === booking.id);
+                bookings[index] = updatedBooking;
+                
+                // Aggiorna l'interfaccia
+                if (booking.type === 'laundry') {
+                    renderLaundryEquipment();
+                } else {
+                    renderGymEquipment();
+                }
+                renderMyBookings();
+                
+                if (isAdmin) {
+                    renderAdminBookings();
+                    updateAdminStats();
+                }
+                
+                // Chiudi il modale
+                document.getElementById('edit-modal').style.display = 'none';
+                
+                alert('Prenotazione aggiornata con successo!');
+            };
+            
+            // Annulla
+            document.getElementById('cancel-edit-btn').onclick = function() {
+                document.getElementById('edit-modal').style.display = 'none';
+            };
+        }
+        
+        function deleteBooking(bookingId) {
+            const bookingIndex = bookings.findIndex(b => b.id === bookingId);
+            if (bookingIndex !== -1) {
+                bookings[bookingIndex].status = "cancelled";
+                
+                // Aggiorna l'interfaccia ospite
+                if (!isAdmin) {
+                    renderLaundryEquipment();
+                    renderGymEquipment();
+                    renderMyBookings();
+                } else {
+                    // Aggiorna interfaccia admin
+                    renderAdminBookings();
+                    updateAdminStats();
+                }
+                
+                alert('Prenotazione cancellata con successo!');
+            }
+        }
+        
+        function removeLaundryEquipment(equipmentId) {
+            const index = laundryEquipment.findIndex(eq => eq.id === equipmentId);
+            if (index !== -1) {
+                // Controlla se ci sono prenotazioni attive per questa attrezzatura
+                const activeBookings = bookings.filter(b => 
+                    b.equipmentId === equipmentId && 
+                    b.status === "active"
+                );
+                
+                if (activeBookings.length > 0) {
+                    alert('Non puoi rimuovere questa attrezzatura perché ha prenotazioni attive. Annulla prima le prenotazioni.');
+                    return;
+                }
+                
+                laundryEquipment.splice(index, 1);
+                renderAdminLaundryList();
+                updateAdminStats();
+                
+                // Aggiorna anche l'interfaccia ospiti se visibile
+                if (!isAdmin) {
+                    populateEquipmentSelects();
+                    renderLaundryEquipment();
+                    setupEquipmentSelection();
+                }
+                
+                alert('Attrezzatura rimossa con successo!');
+            }
+        }
+        
+        function removeGymEquipment(equipmentId) {
+            const index = gymEquipment.findIndex(eq => eq.id === equipmentId);
+            if (index !== -1) {
+                // Controlla se ci sono prenotazioni attive per questa attrezzatura
+                const activeBookings = bookings.filter(b => 
+                    b.equipmentId === equipmentId && 
+                    b.status === "active"
+                );
+                
+                if (activeBookings.length > 0) {
+                    alert('Non puoi rimuovere questa attrezzatura perché ha prenotazioni attive. Annulla prima le prenotazioni.');
+                    return;
+                }
+                
+                gymEquipment.splice(index, 1);
+                renderAdminGymList();
+                updateAdminStats();
+                
+                // Aggiorna anche l'interfaccia ospiti se visibile
+                if (!isAdmin) {
+                    populateEquipmentSelects();
+                    renderGymEquipment();
+                    setupEquipmentSelection();
+                }
+                
+                alert('Attrezzatura rimossa con successo!');
+            }
+        }
+        
+        function removeRoom(roomId) {
+            const index = rooms.findIndex(r => r.id === roomId);
+            if (index !== -1) {
+                // Controlla se ci sono ospiti registrati in questo alloggio
+                const guestsInRoom = users.filter(u => u.roomId === roomId);
+                
+                if (guestsInRoom.length > 0) {
+                    alert('Non puoi rimuovere questo alloggio perché ha ospiti registrati. Rimuovi prima gli ospiti.');
+                    return;
+                }
+                
+                // Rimuovi l'alloggio
+                rooms.splice(index, 1);
+                
+                // Aggiorna l'interfaccia
+                renderAdminRoomsList();
+                updateAdminStats();
+                populateRoomSelects();
+                
+                alert('Alloggio rimosso con successo!');
+            }
+        }
+        
+        function removeUser(userId) {
+            const index = users.findIndex(u => u.id === userId);
+            if (index !== -1) {
+                // Cancella tutte le prenotazioni dell'utente
+                bookings = bookings.filter(b => b.userId !== userId);
+                
+                // Rimuovi l'utente
+                users.splice(index, 1);
+                
+                // Aggiorna l'interfaccia
+                renderAdminUsersList();
+                renderAdminBookings();
+                updateAdminStats();
+                
+                alert('Ospite rimosso con successo!');
+            }
+        }
+});
+    </script>
+</body>
+</html>
