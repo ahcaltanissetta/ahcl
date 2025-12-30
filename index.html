@@ -686,6 +686,30 @@
                 grid-template-columns: 1fr;
             }
         }
+.btn-calendar {
+    background-color: var(--info-color);
+    color: white;
+    border: none;
+    padding: 0.3rem 0.7rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn-calendar:hover {
+    background-color: #315d7e;
+}
+
+/* Aggiungi anche uno stile per il pulsante principale di download */
+.btn-info {
+    background-color: var(--info-color);
+}
+
+.btn-info:hover {
+    background-color: #315d7e;
+}
+
     </style>
 </head>
 <body>
@@ -904,60 +928,48 @@
                 <h2><i class="fas fa-dumbbell"></i> Prenotazione Attrezzature Palestra</h2>
                 <p class="section-description">Prenota l'uso delle attrezzature della palestra. Scegli l'attrezzatura specifica, il giorno e l'orario di inizio e fine. Tutti possono visualizzare le prenotazioni in corso, ma solo tu puoi modificare le tue prenotazioni.</p>
                 
-                <div class="booking-form">
-                    <div class="form-group">
-                        <label for="gym-equipment-type">Tipo di attrezzatura:</label>
-                        <select id="gym-equipment-type">
-                            <option value="">Seleziona tipo</option>
-                            <option value="treadmill">Tapis roulant</option>
-                            <option value="bike">Bicicletta ellittica</option>
-                            <option value="weights">Pesi liberi</option>
-                            <option value="multistation">Multistazione</option>
-                            <option value="bench">Panca</option>
-                            <option value="other">Altro</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="gym-equipment-select">Seleziona attrezzatura:</label>
-                        <select id="gym-equipment-select" disabled>
-                            <option value="">Prima seleziona il tipo</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="gym-date">Data:</label>
-                        <input type="date" id="gym-date">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="gym-start">Ora di inizio:</label>
-                        <input type="time" id="gym-start" min="06:00" max="23:00" value="08:00">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="gym-end">Ora di fine:</label>
-                        <input type="time" id="gym-end" min="06:00" max="23:59" value="09:00">
-                    </div>
-                    
-                    <button id="book-gym-btn" class="btn-success">
-                        <i class="fas fa-calendar-plus"></i> Prenota
-                    </button>
-                </div>
-                
-                <div id="gym-equipment-visual" style="display: none;">
-                    <h3>Selezione Visuale delle Attrezzature</h3>
-                    <p class="section-description">Clicca sull'attrezzatura che desideri prenotare per selezionarla.</p>
-                    
-                    <div class="equipment-selection" id="gym-equipment-selection">
-                        <!-- Le opzioni delle attrezzature palestra saranno caricate qui dinamicamente -->
-                    </div>
-                </div>
-                
-                <h3>Disponibilità Attrezzature Palestra</h3>
-                <div class="equipment-grid" id="gym-equipment-list">
-                    <!-- Le attrezzature della palestra saranno caricate qui dinamicamente -->
-                </div>
+ <div class="booking-form">
+    <div class="form-group">
+        <label for="gym-date">Data:</label>
+        <input type="date" id="gym-date">
+    </div>
+    
+    <div class="form-group">
+        <label for="gym-start">Ora di inizio:</label>
+        <input type="time" id="gym-start" min="06:00" max="23:00" value="08:00">
+    </div>
+    
+    <div class="form-group">
+        <label for="gym-end">Ora di fine:</label>
+        <input type="time" id="gym-end" min="06:00" max="23:59" value="09:00">
+    </div>
+    
+    <div class="form-group">
+        <label for="gym-capacity">Numero di persone:</label>
+        <select id="gym-capacity">
+            <option value="1">1 persona</option>
+            <option value="2" selected>2 persone</option>
+            <option value="3">3 persone</option>
+            <option value="4">4 persone</option>
+            <option value="5">5 persone</option>
+            <option value="6">6 persone</option>
+        </select>
+    </div>
+    
+    <div class="form-group">
+        <label for="gym-notes">Note opzionali:</label>
+        <textarea id="gym-notes" rows="2" placeholder="Eventuali note o richieste particolari"></textarea>
+    </div>
+    
+    <button id="book-gym-btn" class="btn-success">
+        <i class="fas fa-calendar-plus"></i> Prenota Palestra
+    </button>
+</div>
+
+<h3>Disponibilità Palestra</h3>
+<div class="equipment-grid" id="gym-schedule">
+    <!-- Il calendario delle prenotazioni della palestra sarà caricato qui -->
+</div>
             </div>
             
             <!-- Le mie prenotazioni Tab -->
@@ -1035,7 +1047,6 @@
             <nav class="navbar">
                 <a href="#" class="nav-item admin-active" data-tab="admin-dashboard">Dashboard</a>
                 <a href="#" class="nav-item" data-tab="manage-laundry">Gestisci Lavanderia</a>
-                <a href="#" class="nav-item" data-tab="manage-gym">Gestisci Palestra</a>
                 <a href="#" class="nav-item" data-tab="manage-rooms">Gestisci Alloggi</a>
                 <a href="#" class="nav-item" data-tab="manage-users">Gestisci Ospiti</a>
                 <a href="#" class="nav-item" data-tab="view-bookings">Visualizza Prenotazioni</a>
@@ -1053,13 +1064,7 @@
                         <p>Aggiungi nuove attrezzature alla lavanderia</p>
                     </div>
                     
-                    <div class="admin-action-btn" id="add-gym-equipment-btn">
-                        <i class="fas fa-dumbbell"></i>
-                        <h3>Aggiungi Attrezzatura Palestra</h3>
-                        <p>Aggiungi nuove attrezzature alla palestra</p>
-                    </div>
-                    
-                    <div class="admin-action-btn" id="add-room-btn">
+                     <div class="admin-action-btn" id="add-room-btn">
                         <i class="fas fa-door-closed"></i>
                         <h3>Aggiungi Nuovo Alloggio</h3>
                         <p>Aggiungi un nuovo alloggio alla struttura</p>
@@ -1085,12 +1090,7 @@
                         <p>attrezzature registrate</p>
                     </div>
                     
-                    <div style="background-color: white; padding: 1.5rem; border-radius: var(--border-radius); box-shadow: var(--box-shadow);">
-                        <h3 style="color: var(--primary-color); margin-bottom: 0.5rem;">Palestra</h3>
-                        <p style="font-size: 2rem; font-weight: bold;" id="gym-count">0</p>
-                        <p>attrezzature registrate</p>
-                    </div>
-                    
+                                      
                     <div style="background-color: white; padding: 1.5rem; border-radius: var(--border-radius); box-shadow: var(--box-shadow);">
                         <h3 style="color: var(--primary-color); margin-bottom: 0.5rem;">Prenotazioni Attive</h3>
                         <p style="font-size: 2rem; font-weight: bold;" id="active-bookings-count">0</p>
@@ -1128,23 +1128,7 @@
                 </div>
             </div>
             
-            <!-- Gestisci Palestra -->
-            <div id="manage-gym" class="tab-content">
-                <h2 class="admin-title"><i class="fas fa-dumbbell"></i> Gestione Palestra</h2>
-                <p class="section-description">Gestisci le attrezzature disponibili nella palestra. Puoi aggiungere nuove attrezzature, modificare quelle esistenti o rimuoverle.</p>
-                
-                <button id="add-new-gym-btn" class="btn-admin" style="margin-bottom: 1.5rem;">
-                    <i class="fas fa-plus"></i> Aggiungi Nuova Attrezzatura
-                </button>
-                
-                <div class="equipment-management">
-                    <h3>Attrezzature Palestra</h3>
-                    <div class="equipment-list" id="admin-gym-list">
-                        <!-- Lista delle attrezzature della palestra -->
-                    </div>
-                </div>
-            </div>
-            
+             
             <!-- Gestisci Alloggi -->
             <div id="manage-rooms" class="tab-content">
                 <h2 class="admin-title"><i class="fas fa-door-closed"></i> Gestione Alloggi</h2>
@@ -1174,7 +1158,52 @@
                     </div>
                 </div>
             </div>
-            
+      <div id="edit-user-modal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="admin-title">Modifica Ospite</h3>
+            <button class="close-modal">&times;</button>
+        </div>
+        
+        <input type="hidden" id="edit-user-id" value="">
+        
+        <div class="form-group">
+            <label for="edit-user-name">Nome e Cognome:</label>
+            <input type="text" id="edit-user-name" placeholder="Mario Rossi">
+        </div>
+        
+        <div class="form-group">
+            <label for="edit-user-email">Email:</label>
+            <input type="email" id="edit-user-email" placeholder="email@esempio.it">
+        </div>
+        
+        <div class="form-group">
+            <label for="edit-user-password">Password (lascia vuoto per non modificare):</label>
+            <input type="password" id="edit-user-password" placeholder="Nuova password">
+        </div>
+        
+        <div class="form-group">
+            <label for="edit-user-room">Alloggio:</label>
+            <select id="edit-user-room">
+                <!-- Le opzioni saranno caricate dinamicamente -->
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="edit-user-phone">Telefono:</label>
+            <input type="tel" id="edit-user-phone" placeholder="333 1234567">
+        </div>
+        
+        <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+            <button id="save-user-btn" class="btn-admin" style="flex: 1;">
+                <i class="fas fa-save"></i> Salva modifiche
+            </button>
+            <button class="btn-secondary close-modal" style="flex: 1;">
+                <i class="fas fa-times"></i> Annulla
+            </button>
+        </div>
+    </div>
+</div>      
             <!-- Visualizza Prenotazioni -->
             <div id="view-bookings" class="tab-content">
                 <h2 class="admin-title"><i class="fas fa-list-alt"></i> Tutte le Prenotazioni</h2>
@@ -1231,45 +1260,7 @@
             </div>
         </div>
         
-        <div id="add-gym-modal" class="modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="admin-title">Aggiungi Attrezzatura Palestra</h3>
-                    <button class="close-modal">&times;</button>
-                </div>
-                
-                <div class="form-group">
-                    <label for="new-gym-type">Tipo di attrezzatura:</label>
-                    <select id="new-gym-type">
-                        <option value="treadmill">Tapis roulant</option>
-                        <option value="bike">Bicicletta ellittica</option>
-                        <option value="weights">Pesi liberi</option>
-                        <option value="multistation">Multistazione</option>
-                        <option value="bench">Panca piana</option>
-                        <option value="rack">Rack per pesi</option>
-                        <option value="other">Altro</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="new-gym-name">Nome/Identificativo:</label>
-                    <input type="text" id="new-gym-name" placeholder="Es: Tapis roulant 1">
-                </div>
-                
-                <div class="form-group">
-                    <label for="new-gym-position">Posizione nella palestra:</label>
-                    <input type="text" id="new-gym-position" placeholder="Es: Area cardio, vicino all'ingresso">
-                </div>
-                
-                <div class="form-group">
-                    <label for="new-gym-description">Descrizione/Note:</label>
-                    <textarea id="new-gym-description" rows="3" placeholder="Specifiche tecniche o note aggiuntive"></textarea>
-                </div>
-                
-                <button id="save-gym-btn" class="btn-admin">Salva Attrezzatura</button>
-            </div>
-        </div>
-        
+       
         <!-- Modale per gestire alloggi -->
         <div id="add-room-modal" class="modal">
             <div class="modal-content">
@@ -1470,7 +1461,141 @@
         function generateId() {
             return Date.now().toString() + Math.random().toString(36).substr(2, 9);
         }
+        function generateICSFile(booking) {
+    // Crea una data combinata (data + ora)
+    const startDateTime = new Date(`${booking.date}T${booking.startTime}:00`);
+    const endDateTime = new Date(`${booking.date}T${booking.endTime}:00`);
+    
+    // Formatta le date per il formato ICS
+    function formatDateForICS(date) {
+        return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+    }
+    
+    // Crea il contenuto ICS
+    const icsContent = [
+        'BEGIN:VCALENDAR',
+        'VERSION:2.0',
+        'PRODID:-//Sala Assemblee Caltanissetta//Prenotazioni//IT',
+        'BEGIN:VEVENT',
+        `UID:${booking.id}@sala-assemblee-caltanissetta.it`,
+        `DTSTAMP:${formatDateForICS(new Date())}`,
+        `DTSTART:${formatDateForICS(startDateTime)}`,
+        `DTEND:${formatDateForICS(endDateTime)}`,
+        `SUMMARY:Prenotazione ${booking.type === 'laundry' ? 'Lavanderia' : 'Palestra'}: ${booking.equipmentName}`,
+        `DESCRIPTION:Prenotazione per ${booking.userName} (Alloggio ${booking.userRoomCode})\\nTipo: ${booking.type === 'laundry' ? 'Lavanderia' : 'Palestra'}\\nAttrezzatura: ${booking.equipmentName}\\nData: ${booking.date}\\nOrario: ${booking.startTime} - ${booking.endTime}`,
+        `LOCATION:Sala delle Assemblee, Caltanissetta`,
+        'END:VEVENT',
+        'END:VCALENDAR'
+    ].join('\r\n');
+    
+    return icsContent;
+}
+
+function downloadICSFile(booking) {
+    const icsContent = generateICSFile(booking);
+    const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    
+    // Crea un link temporaneo per il download
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `prenotazione-${booking.type}-${booking.date}.ics`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    
+    return true;
+}
+function addDownloadCalendarButton() {
+    // Cerca il contenitore "Le mie prenotazioni" e aggiungi un pulsante
+    const myBookingsContainer = document.getElementById('my-bookings');
+    if (!myBookingsContainer) return;
+    
+    // Controlla se il pulsante esiste già
+    if (!document.getElementById('download-all-calendar-btn')) {
+        const downloadButton = document.createElement('button');
+        downloadButton.id = 'download-all-calendar-btn';
+        downloadButton.className = 'btn-info';
+        downloadButton.innerHTML = '<i class="fas fa-calendar-plus"></i> Scarica tutte le prenotazioni nel calendario';
+        downloadButton.style.marginTop = '1rem';
+        downloadButton.style.marginBottom = '1.5rem';
         
+        downloadButton.addEventListener('click', function() {
+            const myBookings = bookings.filter(booking => 
+                booking.userId === currentUser.id && booking.status === "active"
+            );
+            
+            if (myBookings.length === 0) {
+                alert('Non hai prenotazioni attive da scaricare.');
+                return;
+            }
+            
+            if (confirm(`Vuoi scaricare un file calendario con tutte le tue ${myBookings.length} prenotazioni attive?`)) {
+                // Crea un unico file ICS con tutte le prenotazioni
+                downloadAllBookingsICS(myBookings);
+            }
+        });
+        
+        // Inserisci il pulsante dopo il titolo
+        const title = myBookingsContainer.querySelector('h2');
+        if (title) {
+            title.parentNode.insertBefore(downloadButton, title.nextSibling);
+        }
+    }
+}
+
+function downloadAllBookingsICS(bookingsList) {
+    // Crea un array con tutti gli eventi ICS
+    let icsEvents = [];
+    
+    bookingsList.forEach(booking => {
+        const startDateTime = new Date(`${booking.date}T${booking.startTime}:00`);
+        const endDateTime = new Date(`${booking.date}T${booking.endTime}:00`);
+        
+        function formatDateForICS(date) {
+            return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+        }
+        
+        const event = [
+            'BEGIN:VEVENT',
+            `UID:${booking.id}@sala-assemblee-caltanissetta.it`,
+            `DTSTAMP:${formatDateForICS(new Date())}`,
+            `DTSTART:${formatDateForICS(startDateTime)}`,
+            `DTEND:${formatDateForICS(endDateTime)}`,
+            `SUMMARY:Prenotazione ${booking.type === 'laundry' ? 'Lavanderia' : 'Palestra'}: ${booking.equipmentName}`,
+            `DESCRIPTION:Prenotazione per ${booking.userName} (Alloggio ${booking.userRoomCode})\\nTipo: ${booking.type === 'laundry' ? 'Lavanderia' : 'Palestra'}\\nAttrezzatura: ${booking.equipmentName}\\nData: ${booking.date}\\nOrario: ${booking.startTime} - ${booking.endTime}`,
+            `LOCATION:Sala delle Assemblee, Caltanissetta`,
+            'END:VEVENT'
+        ].join('\r\n');
+        
+        icsEvents.push(event);
+    });
+    
+    // Crea il contenuto ICS completo
+    const icsContent = [
+        'BEGIN:VCALENDAR',
+        'VERSION:2.0',
+        'PRODID:-//Sala Assemblee Caltanissetta//Prenotazioni//IT',
+        ...icsEvents,
+        'END:VCALENDAR'
+    ].join('\r\n');
+    
+    // Crea e scarica il file
+    const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `tutte-prenotazioni-${getFormattedDate(new Date())}.ics`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    
+    alert(`File calendario scaricato con ${bookingsList.length} prenotazioni!`);
+}
+
         function populateRoomSelects() {
             // Popola le select degli alloggi nei form login e registrazione
             const guestRoomSelect = document.getElementById('guest-room');
@@ -1584,7 +1709,7 @@ document.querySelectorAll('.login-tab').forEach(tab => {
                 showApp();
                 updateGuestUI();
                 renderLaundryEquipment();
-                renderGymEquipment();
+                renderGymSchedule();
                 renderMyBookings();
                 populateEquipmentSelects();
                 setupEquipmentSelection();
@@ -1662,7 +1787,7 @@ document.querySelectorAll('.login-tab').forEach(tab => {
                 showApp();
                 updateGuestUI();
                 renderLaundryEquipment();
-                renderGymEquipment();
+                renderGymSchedule()
                 renderMyBookings();
                 populateEquipmentSelects();
                 setupEquipmentSelection();
@@ -1714,11 +1839,12 @@ document.querySelectorAll('.login-tab').forEach(tab => {
                 showApp();
                 updateAdminUI();
                 renderAdminLaundryList();
-                renderAdminGymList();
+                renderGymSchedule();
                 renderAdminRoomsList();
                 renderAdminBookings();
                 renderAdminUsersList();
                 updateAdminStats();
+ 		setupEditUserModal();
             });
             
             // Logout
@@ -1802,202 +1928,168 @@ document.querySelectorAll('.login-tab').forEach(tab => {
                 updateLaundryVisualSelection(selectedLaundryEquipmentId);
             });
             
-            // Selezione tipo palestra
-            document.getElementById('gym-equipment-type').addEventListener('change', function() {
-                const type = this.value;
-                const equipmentSelect = document.getElementById('gym-equipment-select');
-                const visualSelection = document.getElementById('gym-equipment-visual');
-                
-                if (type) {
-                    // Popola la select con le attrezzature del tipo selezionato
-                    populateGymEquipmentSelect(type);
-                    equipmentSelect.disabled = false;
-                    
-                    // Mostra la selezione visiva
-                    renderGymEquipmentVisualSelection(type);
-                    visualSelection.style.display = 'block';
-                } else {
-                    equipmentSelect.innerHTML = '<option value="">Prima seleziona il tipo</option>';
-                    equipmentSelect.disabled = true;
-                    visualSelection.style.display = 'none';
-                    selectedGymEquipmentId = null;
-                }
-            });
-            
-            // Selezione attrezzatura palestra dalla select
-            document.getElementById('gym-equipment-select').addEventListener('change', function() {
-                selectedGymEquipmentId = this.value;
-                
-                // Aggiorna la selezione visiva
-                updateGymVisualSelection(selectedGymEquipmentId);
-            });
+    
             
             // Prenotazione lavanderia (ospite)
-            document.getElementById('book-laundry-btn').addEventListener('click', function() {
-                const type = document.getElementById('laundry-type').value;
-                const equipmentId = document.getElementById('laundry-equipment-select').value;
-                const date = document.getElementById('laundry-date').value;
-                const startTime = document.getElementById('laundry-start').value;
-                const endTime = document.getElementById('laundry-end').value;
-                
-                // Validazione
-                if (!type || !equipmentId || !date || !startTime || !endTime) {
-                    alert('Per favore, compila tutti i campi.');
-                    return;
-                }
-                
-                if (startTime >= endTime) {
-                    alert('L\'ora di fine deve essere successiva all\'ora di inizio.');
-                    return;
-                }
-                
-                // Trova l'attrezzatura selezionata
-                const equipment = laundryEquipment.find(eq => eq.id === equipmentId);
-                if (!equipment) {
-                    alert('Apparecchio non trovato.');
-                    return;
-                }
-                
-                // Controlla se è già prenotata per l'orario selezionato
-                const isBooked = bookings.some(booking => 
-                    booking.equipmentId === equipment.id && 
-                    booking.date === date &&
-                    booking.status === "active" &&
-                    ((startTime >= booking.startTime && startTime < booking.endTime) ||
-                     (endTime > booking.startTime && endTime <= booking.endTime) ||
-                     (startTime <= booking.startTime && endTime >= booking.endTime))
-                );
-                
-                if (isBooked) {
-                    alert('Questo apparecchio è già prenotato per l\'orario selezionato. Prova con un orario diverso.');
-                    return;
-                }
-                
-                // Crea la prenotazione
-                const newBooking = {
-                    id: generateId(),
-                    type: "laundry",
-                    equipmentType: type,
-                    equipmentId: equipment.id,
-                    equipmentName: equipment.name,
-                    userId: currentUser.id,
-                    userName: currentUser.name,
-                    userRoomId: currentUser.roomId,
-                    userRoomCode: currentUser.roomCode,
-                    date: date,
-                    startTime: formatTime(startTime),
-                    endTime: formatTime(endTime),
-                    status: "active"
-                };
-                
-                bookings.push(newBooking);
-                
-                // Reset form
-                const today = getFormattedDate(new Date());
-                document.getElementById('laundry-date').value = today;
-                document.getElementById('laundry-start').value = "10:00";
-                document.getElementById('laundry-end').value = "12:00";
-                document.getElementById('laundry-type').value = "";
-                document.getElementById('laundry-equipment-select').innerHTML = '<option value="">Prima seleziona il tipo</option>';
-                document.getElementById('laundry-equipment-select').disabled = true;
-                document.getElementById('laundry-equipment-visual').style.display = 'none';
-                selectedLaundryEquipmentId = null;
-                
-                // Aggiorna l'interfaccia
-                renderLaundryEquipment();
-                renderMyBookings();
-                
-                alert(`Prenotazione confermata per ${equipment.name} il ${date} dalle ${formatTime(startTime)} alle ${formatTime(endTime)}`);
-            });
+document.getElementById('book-laundry-btn').addEventListener('click', function() {
+    const type = document.getElementById('laundry-type').value;
+    const equipmentId = document.getElementById('laundry-equipment-select').value;
+    const date = document.getElementById('laundry-date').value;
+    const startTime = document.getElementById('laundry-start').value;
+    const endTime = document.getElementById('laundry-end').value;
+    
+    // Validazione
+    if (!type || !equipmentId || !date || !startTime || !endTime) {
+        alert('Per favore, compila tutti i campi.');
+        return;
+    }
+    
+    if (startTime >= endTime) {
+        alert('L\'ora di fine deve essere successiva all\'ora di inizio.');
+        return;
+    }
+    
+    // Trova l'attrezzatura selezionata
+    const equipment = laundryEquipment.find(eq => eq.id === equipmentId);
+    if (!equipment) {
+        alert('Apparecchio non trovato.');
+        return;
+    }
+    
+    // Controlla se è già prenotata per l'orario selezionato
+    const isBooked = bookings.some(booking => 
+        booking.equipmentId === equipment.id && 
+        booking.date === date &&
+        booking.status === "active" &&
+        ((startTime >= booking.startTime && startTime < booking.endTime) ||
+         (endTime > booking.startTime && endTime <= booking.endTime) ||
+         (startTime <= booking.startTime && endTime >= booking.endTime))
+    );
+    
+    if (isBooked) {
+        alert('Questo apparecchio è già prenotato per l\'orario selezionato. Prova con un orario diverso.');
+        return;
+    }
+    
+    // Crea la prenotazione
+    const newBooking = {
+        id: generateId(),
+        type: "laundry",
+        equipmentType: type,
+        equipmentId: equipment.id,
+        equipmentName: equipment.name,
+        userId: currentUser.id,
+        userName: currentUser.name,
+        userRoomId: currentUser.roomId,
+        userRoomCode: currentUser.roomCode,
+        date: date,
+        startTime: formatTime(startTime),
+        endTime: formatTime(endTime),
+        status: "active"
+    };
+    
+    bookings.push(newBooking);
+    
+    // Reset form
+    const today = getFormattedDate(new Date());
+    document.getElementById('laundry-date').value = today;
+    document.getElementById('laundry-start').value = "10:00";
+    document.getElementById('laundry-end').value = "12:00";
+    document.getElementById('laundry-type').value = "";
+    document.getElementById('laundry-equipment-select').innerHTML = '<option value="">Prima seleziona il tipo</option>';
+    document.getElementById('laundry-equipment-select').disabled = true;
+    document.getElementById('laundry-equipment-visual').style.display = 'none';
+    selectedLaundryEquipmentId = null;
+    
+    // Aggiorna l'interfaccia
+    renderLaundryEquipment();
+    renderMyBookings();
+    
+    // Chiedi se vuoi salvare sul calendario
+    if (confirm(`Prenotazione confermata per ${equipment.name} il ${date} dalle ${formatTime(startTime)} alle ${formatTime(endTime)}\n\nVuoi salvare la prenotazione nel tuo calendario?`)) {
+        downloadICSFile(newBooking);
+    }
+});
             
-            // Prenotazione palestra (ospite)
-            document.getElementById('book-gym-btn').addEventListener('click', function() {
-                const type = document.getElementById('gym-equipment-type').value;
-                const equipmentId = document.getElementById('gym-equipment-select').value;
-                const date = document.getElementById('gym-date').value;
-                const startTime = document.getElementById('gym-start').value;
-                const endTime = document.getElementById('gym-end').value;
-                
-                // Validazione
-                if (!type || !equipmentId || !date || !startTime || !endTime) {
-                    alert('Per favore, compila tutti i campi.');
-                    return;
-                }
-                
-                if (startTime >= endTime) {
-                    alert('L\'ora di fine deve essere successiva all\'ora di inizio.');
-                    return;
-                }
-                
-                // Trova l'attrezzatura
-                const equipment = gymEquipment.find(eq => eq.id === equipmentId);
-                if (!equipment) {
-                    alert('Attrezzatura non trovata.');
-                    return;
-                }
-                
-                // Controlla se è già prenotata per l'orario selezionato
-                const isBooked = bookings.some(booking => 
-                    booking.equipmentId === equipment.id && 
-                    booking.date === date &&
-                    booking.status === "active" &&
-                    ((startTime >= booking.startTime && startTime < booking.endTime) ||
-                     (endTime > booking.startTime && endTime <= booking.endTime) ||
-                     (startTime <= booking.startTime && endTime >= booking.endTime))
-                );
-                
-                if (isBooked) {
-                    alert('Questa attrezzatura è già prenotata per l\'orario selezionato. Prova con un orario diverso.');
-                    return;
-                }
-                
-                // Crea la prenotazione
-                const newBooking = {
-                    id: generateId(),
-                    type: "gym",
-                    equipmentType: equipment.type,
-                    equipmentId: equipment.id,
-                    equipmentName: equipment.name,
-                    userId: currentUser.id,
-                    userName: currentUser.name,
-                    userRoomId: currentUser.roomId,
-                    userRoomCode: currentUser.roomCode,
-                    date: date,
-                    startTime: formatTime(startTime),
-                    endTime: formatTime(endTime),
-                    status: "active"
-                };
-                
-                bookings.push(newBooking);
-                
-                // Reset form
-                const today = getFormattedDate(new Date());
-                document.getElementById('gym-date').value = today;
-                document.getElementById('gym-start').value = "08:00";
-                document.getElementById('gym-end').value = "09:00";
-                document.getElementById('gym-equipment-type').value = "";
-                document.getElementById('gym-equipment-select').innerHTML = '<option value="">Prima seleziona il tipo</option>';
-                document.getElementById('gym-equipment-select').disabled = true;
-                document.getElementById('gym-equipment-visual').style.display = 'none';
-                selectedGymEquipmentId = null;
-                
-                // Aggiorna l'interfaccia
-                renderGymEquipment();
-                renderMyBookings();
-                
-                alert(`Prenotazione confermata per ${equipment.name} il ${date} dalle ${formatTime(startTime)} alle ${formatTime(endTime)}`);
-            });
+   // Prenotazione palestra (ospite) - VERSIONE SEMPLIFICATA
+document.getElementById('book-gym-btn').addEventListener('click', function() {
+    const date = document.getElementById('gym-date').value;
+    const startTime = document.getElementById('gym-start').value;
+    const endTime = document.getElementById('gym-end').value;
+    const capacity = document.getElementById('gym-capacity').value;
+    const notes = document.getElementById('gym-notes').value;
+    
+    // Validazione
+    if (!date || !startTime || !endTime || !capacity) {
+        alert('Per favore, compila tutti i campi obbligatori.');
+        return;
+    }
+    
+    if (startTime >= endTime) {
+        alert('L\'ora di fine deve essere successiva all\'ora di inizio.');
+        return;
+    }
+    
+    // Controlla se la palestra è già prenotata per l'orario selezionato
+    const isBooked = bookings.some(booking => 
+        booking.type === "gym" &&
+        booking.date === date &&
+        booking.status === "active" &&
+        ((startTime >= booking.startTime && startTime < booking.endTime) ||
+         (endTime > booking.startTime && endTime <= booking.endTime) ||
+         (startTime <= booking.startTime && endTime >= booking.endTime))
+    );
+    
+    if (isBooked) {
+        alert('La palestra è già prenotata per l\'orario selezionato. Prova con un orario diverso.');
+        return;
+    }
+    
+    // Crea la prenotazione
+    const newBooking = {
+        id: generateId(),
+        type: "gym",
+        equipmentType: "gym_room",
+        equipmentId: "gym-room",
+        equipmentName: "Palestra",
+        userId: currentUser.id,
+        userName: currentUser.name,
+        userRoomId: currentUser.roomId,
+        userRoomCode: currentUser.roomCode,
+        date: date,
+        startTime: formatTime(startTime),
+        endTime: formatTime(endTime),
+        capacity: parseInt(capacity),
+        notes: notes,
+        status: "active"
+    };
+    
+    bookings.push(newBooking);
+    
+    // Reset form
+    const today = getFormattedDate(new Date());
+    document.getElementById('gym-date').value = today;
+    document.getElementById('gym-start').value = "08:00";
+    document.getElementById('gym-end').value = "09:00";
+    document.getElementById('gym-capacity').value = "2";
+    document.getElementById('gym-notes').value = "";
+    
+    // Aggiorna l'interfaccia
+    renderGymSchedule();
+    renderMyBookings();
+    
+    // Chiedi se vuoi salvare sul calendario
+    if (confirm(`Prenotazione confermata per la Palestra il ${date} dalle ${formatTime(startTime)} alle ${formatTime(endTime)} per ${capacity} persone\n\nVuoi salvare la prenotazione nel tuo calendario?`)) {
+        downloadICSFile(newBooking);
+    }
+});
             
             // Gestione modali admin
             document.getElementById('add-laundry-btn').addEventListener('click', function() {
                 document.getElementById('add-laundry-modal').style.display = 'flex';
             });
             
-            document.getElementById('add-gym-equipment-btn').addEventListener('click', function() {
-                document.getElementById('add-gym-modal').style.display = 'flex';
-            });
-            
-            document.getElementById('add-room-btn').addEventListener('click', function() {
+             document.getElementById('add-room-btn').addEventListener('click', function() {
                 openAddRoomModal();
             });
             
@@ -2005,11 +2097,7 @@ document.querySelectorAll('.login-tab').forEach(tab => {
                 document.getElementById('add-laundry-modal').style.display = 'flex';
             });
             
-            document.getElementById('add-new-gym-btn').addEventListener('click', function() {
-                document.getElementById('add-gym-modal').style.display = 'flex';
-            });
-            
-            document.getElementById('add-new-room-btn').addEventListener('click', function() {
+             document.getElementById('add-new-room-btn').addEventListener('click', function() {
                 openAddRoomModal();
             });
             
@@ -2128,53 +2216,7 @@ document.getElementById('save-laundry-btn').addEventListener('click', function()
     }
 });
             
-            // Salva nuova attrezzatura palestra
-            document.getElementById('save-gym-btn').addEventListener('click', function() {
-                const type = document.getElementById('new-gym-type').value;
-                const name = document.getElementById('new-gym-name').value;
-                const position = document.getElementById('new-gym-position').value;
-                const description = document.getElementById('new-gym-description').value;
-                
-                if (!name || !position) {
-                    alert('Per favore, compila almeno il nome e la posizione.');
-                    return;
-                }
-                
-                // Crea nuovo ID
-                const id = `${type}-${generateId().substring(0, 8)}`;
-                
-                // Aggiungi l'attrezzatura
-                gymEquipment.push({
-                    id: id,
-                    name: name,
-                    type: type,
-                    position: position,
-                    description: description,
-                    addedBy: currentUser.username
-                });
-                
-                // Chiudi il modale
-                document.getElementById('add-gym-modal').style.display = 'none';
-                
-                // Reset form
-                document.getElementById('new-gym-name').value = '';
-                document.getElementById('new-gym-position').value = '';
-                document.getElementById('new-gym-description').value = '';
-                
-                // Aggiorna le interfacce
-                renderAdminGymList();
-                updateAdminStats();
-                
-                if (!isAdmin) {
-                    // Se siamo nella parte ospiti, aggiorna anche quella
-                    populateEquipmentSelects();
-                    renderGymEquipment();
-                    setupEquipmentSelection();
-                }
-                
-                alert('Attrezzatura aggiunta con successo!');
-            });
-            
+           
             // Salva nuovo/modifica alloggio - FUNZIONE CORRETTA
             document.getElementById('save-room-btn').addEventListener('click', function() {
                 const roomId = document.getElementById('edit-room-id').value;
@@ -2285,6 +2327,7 @@ document.getElementById('save-laundry-btn').addEventListener('click', function()
                         updateGuestUI();
                     }
                 }
+		setupEditUserModal();
             });
 function closeLaundryModal() {
     document.getElementById('add-laundry-modal').style.display = 'none';
@@ -2629,186 +2672,231 @@ function closeLaundryModal() {
             });
         }
         
-        function renderGymEquipment() {
-            const container = document.getElementById('gym-equipment-list');
-            if (!container) return;
+    function renderGymSchedule() {
+    const container = document.getElementById('gym-schedule');
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    // Ottieni la data selezionata nel form o usa oggi
+    const selectedDate = document.getElementById('gym-date') ? document.getElementById('gym-date').value : getFormattedDate(new Date());
+    
+    // Filtra le prenotazioni della palestra per la data selezionata
+    const gymBookings = bookings.filter(booking => 
+        booking.type === "gym" && 
+        booking.date === selectedDate &&
+        booking.status === "active"
+    ).sort((a, b) => a.startTime.localeCompare(b.startTime));
+    
+    // Orari di apertura della palestra
+    const openingTime = "06:00";
+    const closingTime = "23:00";
+    
+    if (gymBookings.length === 0) {
+        container.innerHTML = `
+            <div class="equipment-card">
+                <div class="equipment-header">
+                    <h3>Palestra - ${selectedDate}</h3>
+                    <div class="equipment-status">Tutto libero</div>
+                </div>
+                <div class="equipment-body">
+                    <p>Nessuna prenotazione per oggi. La palestra è completamente disponibile dalle ${openingTime} alle ${closingTime}.</p>
+                    <p><strong>Orari di apertura:</strong> ${openingTime} - ${closingTime}</p>
+                    <p><strong>Capacità massima:</strong> 6 persone</p>
+                </div>
+            </div>
+        `;
+        return;
+    }
+    
+    // Crea la card principale della palestra
+    const card = document.createElement('div');
+    card.className = 'equipment-card';
+    
+    // Determina se la palestra è attualmente occupata
+    const now = new Date();
+    const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+    const today = getFormattedDate(now);
+    
+    const isCurrentlyBooked = gymBookings.some(booking => 
+        (selectedDate === today || !selectedDate) &&
+        currentTime >= booking.startTime &&
+        currentTime <= booking.endTime
+    );
+    
+    card.innerHTML = `
+        <div class="equipment-header">
+            <h3>Palestra - ${selectedDate}</h3>
+            <div class="equipment-status ${isCurrentlyBooked ? 'busy' : ''}">
+                ${isCurrentlyBooked ? 'Occupata' : 'Disponibile'}
+            </div>
+        </div>
+        <div class="equipment-body">
+            <div class="equipment-info">
+                <div><i class="fas fa-clock"></i> Orari: ${openingTime} - ${closingTime}</div>
+                <div><i class="fas fa-users"></i> Capacità max: 6 persone</div>
+            </div>
             
-            container.innerHTML = '';
-            
-            gymEquipment.forEach(eq => {
-                // Trova le prenotazioni per questa attrezzatura
-                const equipmentBookings = bookings.filter(booking => 
-                    booking.equipmentId === eq.id && 
-                    booking.status === "active"
-                );
-                
-                // Determina se è attualmente disponibile
-                const now = new Date();
-                const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-                const today = getFormattedDate(now);
-                
-                const isCurrentlyBooked = equipmentBookings.some(booking => 
-                    booking.date === today &&
-                    currentTime >= booking.startTime &&
-                    currentTime <= booking.endTime
-                );
-                
-                const card = document.createElement('div');
-                card.className = 'equipment-card';
-                
-                card.innerHTML = `
-                    <div class="equipment-header">
-                        <h3>${eq.name}</h3>
-                        <div class="equipment-status ${isCurrentlyBooked ? 'busy' : ''}">
-                            ${isCurrentlyBooked ? 'Occupato' : 'Disponibile'}
+            <div class="booking-list">
+                <h4>Prenotazioni del giorno:</h4>
+                ${gymBookings.map(booking => `
+                    <div class="booking-item ${booking.userId === currentUser.id ? 'user-booking' : ''}">
+                        <div>
+                            <div><strong>${booking.startTime} - ${booking.endTime}</strong></div>
+                            <div>${booking.userName} (Alloggio ${booking.userRoomCode})</div>
+                            <div><small>Persone: ${booking.capacity || 1}</small></div>
+                            ${booking.notes ? `<div><small>Note: ${booking.notes}</small></div>` : ''}
                         </div>
+                        ${booking.userId === currentUser.id ? `
+                        <div class="booking-actions">
+                            <button class="btn-edit" data-id="${booking.id}">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn-delete" data-id="${booking.id}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                        ` : ''}
                     </div>
-                    <div class="equipment-body">
-                        <div class="equipment-info">
-                            <div><i class="fas fa-dumbbell"></i> ${eq.type === 'treadmill' ? 'Tapis roulant' : 
-                                  eq.type === 'bike' ? 'Bicicletta' : 
-                                  eq.type === 'weights' ? 'Pesi' : 
-                                  eq.type === 'multistation' ? 'Multistazione' : 
-                                  eq.type === 'bench' ? 'Panca' : 'Attrezzatura'}</div>
-                            <div><i class="fas fa-map-marker-alt"></i> ${eq.position}</div>
-                        </div>
-                        <p><small>${eq.description}</small></p>
-                        
-                        ${equipmentBookings.length > 0 ? `
-                        <div class="booking-list">
-                            <h4>Prenotazioni:</h4>
-                            ${equipmentBookings.map(booking => `
-                                <div class="booking-item ${booking.userId === currentUser.id ? 'user-booking' : ''}">
-                                    <div>
-                                        <div><strong>${booking.date}</strong> ${booking.startTime} - ${booking.endTime}</div>
-                                        <div><small>${booking.userName} (Alloggio ${booking.userRoomCode})</small></div>
-                                    </div>
-                                    ${booking.userId === currentUser.id ? `
-                                    <div class="booking-actions">
-                                        <button class="btn-edit" data-id="${booking.id}">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                        <button class="btn-delete" data-id="${booking.id}">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </div>
-                                    ` : ''}
-                                </div>
-                            `).join('')}
-                        </div>
-                        ` : '<p>Nessuna prenotazione attiva</p>'}
-                    </div>
-                `;
-                
-                container.appendChild(card);
-            });
-            
-            // Aggiungi event listeners per i pulsanti di modifica/eliminazione
-            document.querySelectorAll('.btn-edit').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const bookingId = this.getAttribute('data-id');
-                    openEditModal(bookingId);
-                });
-            });
-            
-            document.querySelectorAll('.btn-delete').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const bookingId = this.getAttribute('data-id');
-                    if (confirm('Sei sicuro di voler cancellare questa prenotazione?')) {
-                        deleteBooking(bookingId);
-                    }
-                });
-            });
-        }
+                `).join('')}
+            </div>
+        </div>
+    `;
+    
+    container.appendChild(card);
+    
+    // Aggiungi event listeners per i pulsanti di modifica/eliminazione
+    document.querySelectorAll('.btn-edit').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const bookingId = this.getAttribute('data-id');
+            openEditModal(bookingId);
+        });
+    });
+    
+    document.querySelectorAll('.btn-delete').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const bookingId = this.getAttribute('data-id');
+            if (confirm('Sei sicuro di voler cancellare questa prenotazione?')) {
+                deleteBooking(bookingId);
+                renderGymSchedule();
+            }
+        });
+    });
+}
         
-        function renderMyBookings() {
-            const container = document.getElementById('my-bookings-list');
-            if (!container) return;
-            
-            const myBookings = bookings.filter(booking => 
-                booking.userId === currentUser.id && booking.status === "active"
-            );
-            
-            if (myBookings.length === 0) {
-                container.innerHTML = '<p>Non hai prenotazioni attive.</p>';
-                return;
-            }
-            
-            container.innerHTML = '';
-            
-            // Separa prenotazioni lavanderia e palestra
-            const laundryBookings = myBookings.filter(b => b.type === 'laundry');
-            const gymBookings = myBookings.filter(b => b.type === 'gym');
-            
-            if (laundryBookings.length > 0) {
-                const section = document.createElement('div');
-                section.innerHTML = `
-                    <h3><i class="fas fa-tshirt"></i> Prenotazioni Lavanderia</h3>
-                    <div class="booking-list">
-                        ${laundryBookings.map(booking => `
-                            <div class="booking-item user-booking">
-                                <div>
-                                    <div><strong>${booking.equipmentName}</strong></div>
-                                    <div>${booking.date} ${booking.startTime} - ${booking.endTime}</div>
-                                </div>
-                                <div class="booking-actions">
-                                    <button class="btn-edit" data-id="${booking.id}">
-                                        <i class="fas fa-edit"></i> Modifica
-                                    </button>
-                                    <button class="btn-delete" data-id="${booking.id}">
-                                        <i class="fas fa-trash"></i> Elimina
-                                    </button>
-                                </div>
-                            </div>
-                        `).join('')}
+ function renderMyBookings() {
+    const container = document.getElementById('my-bookings-list');
+    if (!container) return;
+    
+    const myBookings = bookings.filter(booking => 
+        booking.userId === currentUser.id && booking.status === "active"
+    );
+    
+    if (myBookings.length === 0) {
+        container.innerHTML = '<p>Non hai prenotazioni attive.</p>';
+        // Rimuovi il pulsante di download se non ci sono prenotazioni
+        const existingBtn = document.getElementById('download-all-calendar-btn');
+        if (existingBtn) existingBtn.remove();
+        return;
+    }
+    
+    container.innerHTML = '';
+    
+    // Aggiungi il pulsante per scaricare tutte le prenotazioni
+    addDownloadCalendarButton();
+    
+    // Separa prenotazioni lavanderia e palestra
+    const laundryBookings = myBookings.filter(b => b.type === 'laundry');
+    const gymBookings = myBookings.filter(b => b.type === 'gym');
+    
+    if (laundryBookings.length > 0) {
+        const section = document.createElement('div');
+        section.innerHTML = `
+            <h3><i class="fas fa-tshirt"></i> Prenotazioni Lavanderia</h3>
+            <div class="booking-list">
+                ${laundryBookings.map(booking => `
+                    <div class="booking-item user-booking">
+                        <div>
+                            <div><strong>${booking.equipmentName}</strong></div>
+                            <div>${booking.date} ${booking.startTime} - ${booking.endTime}</div>
+                        </div>
+                        <div class="booking-actions">
+                            <button class="btn-edit" data-id="${booking.id}">
+                                <i class="fas fa-edit"></i> Modifica
+                            </button>
+                            <button class="btn-calendar btn-small" data-id="${booking.id}" title="Aggiungi al calendario">
+                                <i class="fas fa-calendar-plus"></i>
+                            </button>
+                            <button class="btn-delete" data-id="${booking.id}">
+                                <i class="fas fa-trash"></i> Elimina
+                            </button>
+                        </div>
                     </div>
-                `;
-                container.appendChild(section);
-            }
-            
-            if (gymBookings.length > 0) {
-                const section = document.createElement('div');
-                section.innerHTML = `
-                    <h3><i class="fas fa-dumbbell"></i> Prenotazioni Palestra</h3>
-                    <div class="booking-list">
-                        ${gymBookings.map(booking => `
-                            <div class="booking-item user-booking">
-                                <div>
-                                    <div><strong>${booking.equipmentName}</strong></div>
-                                    <div>${booking.date} ${booking.startTime} - ${booking.endTime}</div>
-                                </div>
-                                <div class="booking-actions">
-                                    <button class="btn-edit" data-id="${booking.id}">
-                                        <i class="fas fa-edit"></i> Modifica
-                                    </button>
-                                    <button class="btn-delete" data-id="${booking.id}">
-                                        <i class="fas fa-trash"></i> Elimina
-                                    </button>
-                                </div>
-                            </div>
-                        `).join('')}
+                `).join('')}
+            </div>
+        `;
+        container.appendChild(section);
+    }
+    
+    if (gymBookings.length > 0) {
+        const section = document.createElement('div');
+        section.innerHTML = `
+            <h3><i class="fas fa-dumbbell"></i> Prenotazioni Palestra</h3>
+            <div class="booking-list">
+                ${gymBookings.map(booking => `
+                    <div class="booking-item user-booking">
+                        <div>
+                            <div><strong>Palestra</strong></div>
+                            <div>${booking.date} ${booking.startTime} - ${booking.endTime}</div>
+                            <div><small>Persone: ${booking.capacity || 1}</small></div>
+                            ${booking.notes ? `<div><small>Note: ${booking.notes}</small></div>` : ''}
+                        </div>
+                        <div class="booking-actions">
+                            <button class="btn-edit" data-id="${booking.id}">
+                                <i class="fas fa-edit"></i> Modifica
+                            </button>
+                            <button class="btn-calendar btn-small" data-id="${booking.id}" title="Aggiungi al calendario">
+                                <i class="fas fa-calendar-plus"></i>
+                            </button>
+                            <button class="btn-delete" data-id="${booking.id}">
+                                <i class="fas fa-trash"></i> Elimina
+                            </button>
+                        </div>
                     </div>
-                `;
-                container.appendChild(section);
+                `).join('')}
+            </div>
+        `;
+        container.appendChild(section);
+    }
+    
+    // Aggiungi event listeners
+    document.querySelectorAll('.btn-edit').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const bookingId = this.getAttribute('data-id');
+            openEditModal(bookingId);
+        });
+    });
+    
+    document.querySelectorAll('.btn-delete').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const bookingId = this.getAttribute('data-id');
+            if (confirm('Sei sicuro di voler cancellare questa prenotazione?')) {
+                deleteBooking(bookingId);
             }
-            
-            // Aggiungi event listeners
-            document.querySelectorAll('.btn-edit').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const bookingId = this.getAttribute('data-id');
-                    openEditModal(bookingId);
-                });
-            });
-            
-            document.querySelectorAll('.btn-delete').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const bookingId = this.getAttribute('data-id');
-                    if (confirm('Sei sicuro di voler cancellare questa prenotazione?')) {
-                        deleteBooking(bookingId);
-                    }
-                });
-            });
-        }
+        });
+    });
+    
+    // Aggiungi event listeners per i pulsanti calendario
+    document.querySelectorAll('.btn-calendar').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const bookingId = this.getAttribute('data-id');
+            const booking = bookings.find(b => b.id === bookingId);
+            if (booking) {
+                downloadICSFile(booking);
+            }
+        });
+    });
+}
    function openEditLaundryModal(equipmentId) {
     const equipment = laundryEquipment.find(eq => eq.id === equipmentId);
     if (!equipment) return;
@@ -3008,56 +3096,86 @@ document.querySelectorAll('[data-type="laundry"].btn-edit').forEach(btn => {
             });
         }
         
-        function renderAdminUsersList() {
-            const container = document.getElementById('admin-users-list');
-            if (!container) return;
-            
-            if (users.length === 0) {
-                container.innerHTML = '<p>Nessun ospite registrato.</p>';
-                return;
+    function renderAdminUsersList() {
+    const container = document.getElementById('admin-users-list');
+    if (!container) return;
+    
+    if (users.length === 0) {
+        container.innerHTML = '<p>Nessun ospite registrato.</p>';
+        return;
+    }
+    
+    container.innerHTML = '';
+    
+    users.forEach(user => {
+        // Trova i dettagli dell'alloggio
+        const userRoom = rooms.find(r => r.id === user.roomId);
+        
+        // Conta le prenotazioni attive dell'utente
+        const userBookings = bookings.filter(b => b.userId === user.id && b.status === "active");
+        const hasActiveBookings = userBookings.length > 0;
+        
+        const item = document.createElement('div');
+        item.className = 'equipment-list-item';
+        
+        item.innerHTML = `
+            <div style="flex: 1;">
+                <div><strong>${user.name}</strong></div>
+                <div><small>Email: ${user.email}</small></div>
+                <div><small>Alloggio: ${userRoom ? `${userRoom.code} - ${userRoom.name}` : user.roomCode}</small></div>
+                <div><small>Telefono: ${user.phone || 'Non fornito'}</small></div>
+                <div><small>Registrato il: ${user.registered}</small></div>
+                <div><small>Prenotazioni attive: ${userBookings.length}</small></div>
+                ${hasActiveBookings ? 
+                    `<div style="color: var(--warning-color); font-size: 0.85rem; margin-top: 0.5rem;">
+                        <i class="fas fa-exclamation-triangle"></i> Non può essere eliminato perché ha prenotazioni attive
+                    </div>` : 
+                    ''
+                }
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                <button class="btn-edit btn-small edit-user-btn" data-id="${user.id}">
+                    <i class="fas fa-edit"></i> Modifica
+                </button>
+                <button class="btn-delete btn-small" data-id="${user.id}" data-type="user" 
+                    ${hasActiveBookings ? 'disabled style="opacity: 0.5; cursor: not-allowed;"' : ''}>
+                    <i class="fas fa-trash"></i> ${hasActiveBookings ? 'Non eliminabile' : 'Elimina'}
+                </button>
+            </div>
+        `;
+        
+        container.appendChild(item);
+    });
+    
+    // Aggiungi event listeners per modificare utenti
+    document.querySelectorAll('.edit-user-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const userId = parseInt(this.getAttribute('data-id'));
+            openEditUserModal(userId);
+        });
+    });
+    
+    // Aggiungi event listeners per rimuovere utenti (solo se non disabilitato)
+    document.querySelectorAll('[data-type="user"].btn-delete:not([disabled])').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const userId = parseInt(this.getAttribute('data-id'));
+            if (confirm('Sei sicuro di voler rimuovere questo ospite?')) {
+                removeUser(userId);
             }
+        });
+    });
+    
+    // Aggiungi tooltip per pulsanti disabilitati
+    document.querySelectorAll('[data-type="user"].btn-delete[disabled]').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const userId = parseInt(this.getAttribute('data-id'));
+            const userBookings = bookings.filter(b => b.userId === userId && b.status === "active");
             
-            container.innerHTML = '';
-            
-            users.forEach(user => {
-                // Trova i dettagli dell'alloggio
-                const userRoom = rooms.find(r => r.id === user.roomId);
-                
-                // Conta le prenotazioni attive dell'utente
-                const userBookings = bookings.filter(b => b.userId === user.id && b.status === "active").length;
-                
-                const item = document.createElement('div');
-                item.className = 'equipment-list-item';
-                
-                item.innerHTML = `
-                    <div>
-                        <div><strong>${user.name}</strong></div>
-                        <div><small>Email: ${user.email}</small></div>
-                        <div><small>Alloggio: ${userRoom ? `${userRoom.code} - ${userRoom.name}` : user.roomCode}</small></div>
-                        <div><small>Telefono: ${user.phone || 'Non fornito'}</small></div>
-                        <div><small>Registrato il: ${user.registered}</small></div>
-                        <div><small>Prenotazioni attive: ${userBookings}</small></div>
-                    </div>
-                    <div>
-                        <button class="btn-delete btn-small" data-id="${user.id}" data-type="user">
-                            <i class="fas fa-trash"></i> Rimuovi
-                        </button>
-                    </div>
-                `;
-                
-                container.appendChild(item);
-            });
-            
-            // Aggiungi event listeners per rimuovere utenti
-            document.querySelectorAll('[data-type="user"].btn-delete').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const userId = parseInt(this.getAttribute('data-id'));
-                    if (confirm('Sei sicuro di voler rimuovere questo ospite? Tutte le sue prenotazioni saranno cancellate.')) {
-                        removeUser(userId);
-                    }
-                });
-            });
-        }
+            alert(`Non è possibile eliminare questo ospite perché ha ${userBookings.length} prenotazione(i) attiva(e).\n\nVai in "Visualizza Prenotazioni" e cancella prima le sue prenotazioni.`);
+        });
+    });
+}
         
         function renderAdminBookings() {
             const laundryContainer = document.getElementById('admin-laundry-bookings');
@@ -3093,29 +3211,29 @@ document.querySelectorAll('[data-type="laundry"].btn-edit').forEach(btn => {
                 `;
             }
             
-            // Prenotazioni palestra
-            if (gymBookings.length === 0) {
-                gymContainer.innerHTML = '<p>Nessuna prenotazione attiva per la palestra.</p>';
-            } else {
-                gymContainer.innerHTML = `
-                    <div class="booking-list">
-                        ${gymBookings.map(booking => `
-                            <div class="booking-item">
-                                <div>
-                                    <div><strong>${booking.equipmentName}</strong></div>
-                                    <div>${booking.date} ${booking.startTime} - ${booking.endTime}</div>
-                                    <div><small>Prenotato da: ${booking.userName} (Alloggio ${booking.userRoomCode})</small></div>
-                                </div>
-                                <div class="booking-actions">
-                                    <button class="btn-delete btn-small" data-id="${booking.id}">
-                                        <i class="fas fa-trash"></i> Annulla
-                                    </button>
-                                </div>
-                            </div>
-                        `).join('')}
+  // Prenotazioni palestra
+if (gymBookings.length === 0) {
+    gymContainer.innerHTML = '<p>Nessuna prenotazione attiva per la palestra.</p>';
+} else {
+    gymContainer.innerHTML = `
+        <div class="booking-list">
+            ${gymBookings.map(booking => `
+                <div class="booking-item">
+                    <div>
+                        <div><strong>${booking.equipmentName}</strong></div>
+                        <div>${booking.date} ${booking.startTime} - ${booking.endTime}</div>
+                        <div><small>Prenotato da: ${booking.userName} (Alloggio ${booking.userRoomCode})</small></div>
                     </div>
-                `;
-            }
+                    <div class="booking-actions">
+                        <button class="btn-delete btn-small" data-id="${booking.id}">
+                            <i class="fas fa-trash"></i> Annulla
+                        </button>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    `;
+}
             
             // Aggiungi event listeners per annullare prenotazioni
             document.querySelectorAll('#admin-laundry-bookings .btn-delete, #admin-gym-bookings .btn-delete').forEach(btn => {
@@ -3137,8 +3255,7 @@ document.querySelectorAll('[data-type="laundry"].btn-edit').forEach(btn => {
             
             // Conta attrezzature
             document.getElementById('laundry-count').textContent = laundryEquipment.length;
-            document.getElementById('gym-count').textContent = gymEquipment.length;
-            
+                        
             // Conta prenotazioni attive
             const activeBookings = bookings.filter(b => b.status === "active").length;
             document.getElementById('active-bookings-count').textContent = activeBookings;
@@ -3173,7 +3290,36 @@ document.querySelectorAll('[data-type="laundry"].btn-edit').forEach(btn => {
             };
             return statuses[status] || status;
         }
-        
+        function openEditUserModal(userId) {
+    const user = users.find(u => u.id === userId);
+    if (!user) return;
+    
+    const userRoom = rooms.find(r => r.id === user.roomId);
+    
+    // Popola il form
+    document.getElementById('edit-user-id').value = user.id;
+    document.getElementById('edit-user-name').value = user.name;
+    document.getElementById('edit-user-email').value = user.email;
+    document.getElementById('edit-user-password').value = '';
+    document.getElementById('edit-user-phone').value = user.phone || '';
+    
+    // Popola la select degli alloggi
+    const roomSelect = document.getElementById('edit-user-room');
+    roomSelect.innerHTML = '<option value="">Seleziona alloggio</option>';
+    
+    rooms.filter(room => room.status === "active").forEach(room => {
+        const option = document.createElement('option');
+        option.value = room.id;
+        option.textContent = `${room.code} - ${room.name}`;
+        if (user.roomId === room.id) {
+            option.selected = true;
+        }
+        roomSelect.appendChild(option);
+    });
+    
+    // Mostra il modale
+    document.getElementById('edit-user-modal').style.display = 'flex';
+}
         function openAddRoomModal() {
             // Reset del form
             document.getElementById('edit-room-id').value = '';
@@ -3190,6 +3336,94 @@ document.querySelectorAll('[data-type="laundry"].btn-edit').forEach(btn => {
             document.getElementById('add-room-modal').style.display = 'flex';
         }
         
+function setupEditUserModal() {
+    const saveUserBtn = document.getElementById('save-user-btn');
+    if (saveUserBtn) {
+        saveUserBtn.addEventListener('click', function() {
+            const userId = parseInt(document.getElementById('edit-user-id').value);
+            const name = document.getElementById('edit-user-name').value;
+            const email = document.getElementById('edit-user-email').value;
+            const password = document.getElementById('edit-user-password').value;
+            const roomId = document.getElementById('edit-user-room').value;
+            const phone = document.getElementById('edit-user-phone').value;
+            
+            // Validazione
+            if (!name || !email || !roomId) {
+                alert('Per favore, compila tutti i campi obbligatori.');
+                return;
+            }
+            
+            // Controlla se l'email è già usata da un altro utente
+            const existingUser = users.find(u => u.email === email && u.id !== userId);
+            if (existingUser) {
+                alert('Questa email è già registrata da un altro ospite.');
+                return;
+            }
+            
+            // Trova l'utente
+            const userIndex = users.findIndex(u => u.id === userId);
+            if (userIndex === -1) {
+                alert('Errore: ospite non trovato.');
+                return;
+            }
+            
+            // Trova il nuovo alloggio
+            const newRoom = rooms.find(r => r.id === parseInt(roomId));
+            if (!newRoom) {
+                alert('Alloggio non valido.');
+                return;
+            }
+            
+            // Aggiorna l'utente
+            users[userIndex] = {
+                ...users[userIndex],
+                name: name,
+                email: email,
+                roomId: newRoom.id,
+                roomCode: newRoom.code,
+                phone: phone
+            };
+            
+            // Se è stata fornita una nuova password, aggiornala
+            if (password.trim() !== '') {
+                users[userIndex].password = password;
+            }
+            
+            // Aggiorna anche i riferimenti nelle prenotazioni
+            bookings.forEach(booking => {
+                if (booking.userId === userId) {
+                    booking.userName = name;
+                    booking.userRoomId = newRoom.id;
+                    booking.userRoomCode = newRoom.code;
+                }
+            });
+            
+            // Chiudi il modale
+            document.getElementById('edit-user-modal').style.display = 'none';
+            
+            // Reset form
+            document.getElementById('edit-user-id').value = '';
+            document.getElementById('edit-user-name').value = '';
+            document.getElementById('edit-user-email').value = '';
+            document.getElementById('edit-user-password').value = '';
+            document.getElementById('edit-user-room').value = '';
+            document.getElementById('edit-user-phone').value = '';
+            
+            // Aggiorna l'interfaccia
+            renderAdminUsersList();
+            renderAdminBookings();
+            
+            alert('Ospite modificato con successo!');
+        });
+    }
+    
+    // Chiudi il modale
+    document.querySelectorAll('#edit-user-modal .close-modal').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.getElementById('edit-user-modal').style.display = 'none';
+        });
+    });
+}
         function openEditRoomModal(roomId) {
             const room = rooms.find(r => r.id === roomId);
             if (!room) return;
@@ -3252,6 +3486,12 @@ document.querySelectorAll('[data-type="laundry"].btn-edit').forEach(btn => {
                     <label for="edit-end">Ora di fine:</label>
                     <input type="time" id="edit-end" value="${booking.endTime}">
                 </div>
+  <div class="form-group" style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #eee;">
+        <label style="font-weight: normal;">Aggiungi al calendario:</label>
+        <button type="button" id="download-ics-btn" class="btn-calendar" style="width: auto; padding: 0.5rem 1rem;">
+            <i class="fas fa-calendar-plus"></i> Scarica per il calendario
+        </button>
+    </div>
             `;
             
             // Mostra il modale
@@ -3317,25 +3557,27 @@ document.querySelectorAll('[data-type="laundry"].btn-edit').forEach(btn => {
             };
         }
         
-        function deleteBooking(bookingId) {
-            const bookingIndex = bookings.findIndex(b => b.id === bookingId);
-            if (bookingIndex !== -1) {
-                bookings[bookingIndex].status = "cancelled";
-                
-                // Aggiorna l'interfaccia ospite
-                if (!isAdmin) {
-                    renderLaundryEquipment();
-                    renderGymEquipment();
-                    renderMyBookings();
-                } else {
-                    // Aggiorna interfaccia admin
-                    renderAdminBookings();
-                    updateAdminStats();
-                }
-                
-                alert('Prenotazione cancellata con successo!');
-            }
+ function deleteBooking(bookingId) {
+    const bookingIndex = bookings.findIndex(b => b.id === bookingId);
+    if (bookingIndex !== -1) {
+        bookings[bookingIndex].status = "cancelled";
+        
+        // Aggiorna l'interfaccia ospite
+        if (!isAdmin) {
+            renderLaundryEquipment();
+            renderGymEquipment();
+            renderMyBookings();
+        } else {
+            // Aggiorna interfaccia admin
+            renderAdminBookings();
+            updateAdminStats();
+            // AGGIUNGI QUESTA RIGA:
+            renderAdminUsersList(); // <-- Questo risolve il primo problema
         }
+        
+        alert('Prenotazione cancellata con successo!');
+    }
+}
         
         function removeLaundryEquipment(equipmentId) {
             const index = laundryEquipment.findIndex(eq => eq.id === equipmentId);
@@ -3418,23 +3660,27 @@ document.querySelectorAll('[data-type="laundry"].btn-edit').forEach(btn => {
             }
         }
         
-        function removeUser(userId) {
-            const index = users.findIndex(u => u.id === userId);
-            if (index !== -1) {
-                // Cancella tutte le prenotazioni dell'utente
-                bookings = bookings.filter(b => b.userId !== userId);
-                
-                // Rimuovi l'utente
-                users.splice(index, 1);
-                
-                // Aggiorna l'interfaccia
-                renderAdminUsersList();
-                renderAdminBookings();
-                updateAdminStats();
-                
-                alert('Ospite rimosso con successo!');
-            }
-        }
+  function removeUser(userId) {
+    // Controlla se ci sono ancora prenotazioni attive (doppio controllo)
+    const userBookings = bookings.filter(b => b.userId === userId && b.status === "active");
+    
+    if (userBookings.length > 0) {
+        alert(`Non è possibile eliminare questo ospite perché ha ${userBookings.length} prenotazione(i) attiva(e).\n\nVai in "Visualizza Prenotazioni" e cancella prima le sue prenotazioni.`);
+        return;
+    }
+    
+    const index = users.findIndex(u => u.id === userId);
+    if (index !== -1) {
+        // Rimuovi l'utente
+        users.splice(index, 1);
+        
+        // Aggiorna l'interfaccia
+        renderAdminUsersList();
+        updateAdminStats();
+        
+        alert('Ospite rimosso con successo!');
+    }
+}
 });
     </script>
 </body>
