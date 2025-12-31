@@ -1505,34 +1505,48 @@ supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
             
             // Login amministratore - VERSIONE CORRETTA
 async function verifyAdminLogin(username, password) {
-  // TEMPORANEO: Bypassa completamente Supabase per admin
-  console.log(`Login admin temporaneo: ${username}`);
-  
-  if (username.trim().toLowerCase() === 'admin' && password === 'admin123') {
-    return {
-      id: 1,
-      username: 'admin',
-      name: 'Amministratore Sistema',
-      type: 'admin',
-      created_at: new Date().toISOString()
-    };
-  }
-  
-  // Per sicurezza, prova comunque la query
   try {
-    const { data, error } = await supabaseClient
+    console.log(`🔐 Tentativo login admin: "${username}"`);
+    
+    // 1. Cerca l'admin nel database (case-insensitive)
+    const { data: admins, error } = await supabaseClient
       .from('admin_users')
-      .select('*');
+      .select('*')
+      .ilike('username', username.trim()) // ilike è case-insensitive
+      .limit(1);
     
-    console.log('Debug - admin_users content:', data);
-    
-    if (data && data.length > 0) {
-      console.log('Admin nel DB:', data);
+    if (error) {
+      console.log('❌ Errore query admin:', error.message);
+      return null;
     }
     
+    if (!admins || admins.length === 0) {
+      console.log('❌ Admin non trovato nel DB');
+      return null;
+    }
+    
+    const admin = admins[0];
+    
+    // 2. Verifica password dal database
+    console.log(`🔑 Verifica password: "${password}" vs DB: "${admin.password}"`);
+    console.log(`🔑 Match? ${password === admin.password}`);
+    
+    if (password === admin.password) {
+      console.log('✅ Login admin riuscito:', admin.name);
+      return {
+        id: admin.id,
+        username: admin.username,
+        name: admin.name,
+        type: admin.type || 'admin',
+        created_at: admin.created_at || new Date().toISOString()
+      };
+    }
+    
+    console.log('❌ Password errata');
     return null;
-  } catch (err) {
-    console.error('Errore query admin:', err);
+    
+  } catch (error) {
+    console.error('💥 Errore durante login admin:', error);
     return null;
   }
 }
