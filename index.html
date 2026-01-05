@@ -3595,21 +3595,107 @@ async function deleteUserLocal(userId) {
     return icsContent;
 }
             
-            function downloadICSFile(booking) {
-                const icsContent = generateICSFile(booking);
-                const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
-                const url = URL.createObjectURL(blob);
-                
-                const link = document.createElement('a');
-                link.href = url;
-                link.download = `prenotazione-${booking.type}-${booking.booking_date}.ics`;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                URL.revokeObjectURL(url);
-                
-                return true;
-            }
+ function downloadICSFile(booking) {
+    try {
+        const icsContent = generateICSFile(booking);
+        const fileName = `prenotazione-${booking.type}-${formatShortItalianDate(booking.booking_date)}.ics`;
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        
+        // Metodo 1: Blob URL (funziona su molti browser)
+        const blob = new Blob([icsContent], { 
+            type: 'text/calendar;charset=utf-8',
+            endings: 'transparent'
+        });
+        const blobUrl = URL.createObjectURL(blob);
+        
+        // Metodo 2: Data URL (alternative)
+        const dataUrl = 'data:text/calendar;charset=utf-8,' + encodeURIComponent(icsContent);
+        
+        if (isMobile) {
+            // Prova prima con window.open
+            const newWindow = window.open(blobUrl, '_blank');
+            
+            // Se non funziona, mostra istruzioni
+            setTimeout(() => {
+                if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
+                    const instructions = `
+                        <div style="
+                            position: fixed;
+                            top: 0;
+                            left: 0;
+                            width: 100%;
+                            height: 100%;
+                            background: rgba(0,0,0,0.8);
+                            z-index: 10000;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            padding: 20px;
+                        ">
+                            <div style="
+                                background: white;
+                                padding: 2rem;
+                                border-radius: 10px;
+                                max-width: 500px;
+                                text-align: center;
+                            ">
+                                <h3 style="color: var(--primary-color); margin-bottom: 1rem;">
+                                    <i class="fas fa-calendar-plus"></i> Aggiungi al Calendario
+                                </h3>
+                                <p>Per aggiungere questa prenotazione al tuo calendario:</p>
+                                <ol style="text-align: left; margin: 1rem 0;">
+                                    <li>Copia questo link:</li>
+                                    <input type="text" value="${dataUrl}" readonly 
+                                        style="width: 100%; padding: 0.5rem; margin: 0.5rem 0; border: 1px solid #ccc; border-radius: 4px;">
+                                    <li>Incollalo nel browser</li>
+                                    <li>Salva il file .ics</li>
+                                    <li>Apri il file con l'app Calendario</li>
+                                </ol>
+                                <button onclick="this.parentElement.parentElement.remove()" 
+                                    style="
+                                        background: var(--primary-color);
+                                        color: white;
+                                        border: none;
+                                        padding: 0.8rem 2rem;
+                                        border-radius: 5px;
+                                        font-weight: bold;
+                                        cursor: pointer;
+                                        margin-top: 1rem;
+                                    ">
+                                    OK, ho capito
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = instructions;
+                    document.body.appendChild(tempDiv.firstElementChild);
+                }
+            }, 1000);
+        } else {
+            // Desktop - download diretto
+            const link = document.createElement('a');
+            link.href = blobUrl;
+            link.download = fileName;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+        
+        // Pulizia
+        setTimeout(() => {
+            URL.revokeObjectURL(blobUrl);
+        }, 60000); // 60 secondi
+        
+        return true;
+        
+    } catch (error) {
+        console.error('Errore nel download del file ICS:', error);
+        alert('Non è stato possibile scaricare il file del calendario. Riprova più tardi.');
+        return false;
+    }
+}
             document.getElementById('gym-view-range')?.addEventListener('change', function() {
                 renderGymSchedule();
             });
