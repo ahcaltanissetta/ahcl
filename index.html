@@ -3601,98 +3601,134 @@ async function deleteUserLocal(userId) {
         const fileName = `prenotazione-${booking.type}-${formatShortItalianDate(booking.booking_date)}.ics`;
         const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
         
-        // Metodo 1: Blob URL (funziona su molti browser)
-        const blob = new Blob([icsContent], { 
-            type: 'text/calendar;charset=utf-8',
-            endings: 'transparent'
-        });
-        const blobUrl = URL.createObjectURL(blob);
-        
-        // Metodo 2: Data URL (alternative)
-        const dataUrl = 'data:text/calendar;charset=utf-8,' + encodeURIComponent(icsContent);
-        
-        if (isMobile) {
-            // Prova prima con window.open
-            const newWindow = window.open(blobUrl, '_blank');
-            
-            // Se non funziona, mostra istruzioni
-            setTimeout(() => {
-                if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
-                    const instructions = `
-                        <div style="
-                            position: fixed;
-                            top: 0;
-                            left: 0;
-                            width: 100%;
-                            height: 100%;
-                            background: rgba(0,0,0,0.8);
-                            z-index: 10000;
-                            display: flex;
-                            justify-content: center;
-                            align-items: center;
-                            padding: 20px;
-                        ">
-                            <div style="
-                                background: white;
-                                padding: 2rem;
-                                border-radius: 10px;
-                                max-width: 500px;
-                                text-align: center;
-                            ">
-                                <h3 style="color: var(--primary-color); margin-bottom: 1rem;">
-                                    <i class="fas fa-calendar-plus"></i> Aggiungi al Calendario
-                                </h3>
-                                <p>Per aggiungere questa prenotazione al tuo calendario:</p>
-                                <ol style="text-align: left; margin: 1rem 0;">
-                                    <li>Copia questo link:</li>
-                                    <input type="text" value="${dataUrl}" readonly 
-                                        style="width: 100%; padding: 0.5rem; margin: 0.5rem 0; border: 1px solid #ccc; border-radius: 4px;">
-                                    <li>Incollalo nel browser</li>
-                                    <li>Salva il file .ics</li>
-                                    <li>Apri il file con l'app Calendario</li>
-                                </ol>
-                                <button onclick="this.parentElement.parentElement.remove()" 
-                                    style="
-                                        background: var(--primary-color);
-                                        color: white;
-                                        border: none;
-                                        padding: 0.8rem 2rem;
-                                        border-radius: 5px;
-                                        font-weight: bold;
-                                        cursor: pointer;
-                                        margin-top: 1rem;
-                                    ">
-                                    OK, ho capito
-                                </button>
-                            </div>
-                        </div>
-                    `;
-                    
-                    const tempDiv = document.createElement('div');
-                    tempDiv.innerHTML = instructions;
-                    document.body.appendChild(tempDiv.firstElementChild);
+        // Per iOS, usa Web Share API se disponibile
+        if (isMobile && navigator.share) {
+            try {
+                // Converti in blob per la condivisione
+                const blob = new Blob([icsContent], { 
+                    type: 'text/calendar' 
+                });
+                const file = new File([blob], fileName, { 
+                    type: 'text/calendar' 
+                });
+                
+                // Usa Web Share API
+                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                    navigator.share({
+                        files: [file],
+                        title: `Prenotazione ${booking.type === 'laundry' ? 'Lavanderia' : 'Palestra'}`,
+                        text: `Prenotazione per ${booking.user_name}`
+                    })
+                    .then(() => console.log('Condiviso con successo'))
+                    .catch((error) => {
+                        console.log('Web Share fallito:', error);
+                        fallbackDownload(icsContent, fileName);
+                    });
+                } else {
+                    fallbackDownload(icsContent, fileName);
                 }
-            }, 1000);
+            } catch (shareError) {
+                console.log('Web Share non supportato:', shareError);
+                fallbackDownload(icsContent, fileName);
+            }
         } else {
-            // Desktop - download diretto
-            const link = document.createElement('a');
-            link.href = blobUrl;
-            link.download = fileName;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            // Metodo fallback per tutti gli altri
+            fallbackDownload(icsContent, fileName);
         }
         
-        // Pulizia
-        setTimeout(() => {
-            URL.revokeObjectURL(blobUrl);
-        }, 60000); // 60 secondi
+        function fallbackDownload(content, filename) {
+            const blob = new Blob([content], { type: 'text/calendar' });
+            const url = URL.createObjectURL(blob);
+            
+            if (isMobile) {
+                // Per mobile: mostra link cliccabile
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = filename;
+                link.textContent = 'Tocca qui per scaricare il file calendario';
+                link.style.cssText = `
+                    display: block;
+                    background: var(--success-color);
+                    color: white;
+                    padding: 1rem;
+                    margin: 1rem;
+                    border-radius: 8px;
+                    text-align: center;
+                    font-weight: bold;
+                    text-decoration: none;
+                `;
+                
+                const container = document.createElement('div');
+                container.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0,0,0,0.7);
+                    z-index: 9999;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                `;
+                
+                const message = document.createElement('div');
+                message.style.cssText = `
+                    background: white;
+                    padding: 2rem;
+                    border-radius: 10px;
+                    max-width: 90%;
+                    text-align: center;
+                `;
+                message.innerHTML = `
+                    <h3>Aggiungi al Calendario</h3>
+                    <p>1. Premi sul pulsante verde</p>
+                    <p>2. Scarica il file .ics</p>
+                    <p>3. Apri il file con l'app Calendario</p>
+                    <p>4. Conferma l'aggiunta</p>
+                `;
+                
+                message.appendChild(link);
+                container.appendChild(message);
+                document.body.appendChild(container);
+                
+                // Pulsante chiudi
+                const closeBtn = document.createElement('button');
+                closeBtn.textContent = 'Chiudi';
+                closeBtn.style.cssText = `
+                    background: var(--secondary-color);
+                    color: white;
+                    border: none;
+                    padding: 0.8rem 2rem;
+                    border-radius: 5px;
+                    margin-top: 1rem;
+                    cursor: pointer;
+                `;
+                closeBtn.onclick = () => {
+                    document.body.removeChild(container);
+                    URL.revokeObjectURL(url);
+                };
+                message.appendChild(closeBtn);
+                
+            } else {
+                // Per desktop: download automatico
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = filename;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                setTimeout(() => URL.revokeObjectURL(url), 1000);
+            }
+        }
         
         return true;
         
     } catch (error) {
-        console.error('Errore nel download del file ICS:', error);
-        alert('Non è stato possibile scaricare il file del calendario. Riprova più tardi.');
+        console.error('Errore ICS:', error);
+        alert('Non è stato possibile creare il file calendario.');
         return false;
     }
 }
